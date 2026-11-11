@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calmdeck: Your money, habits and goals in one private app</title>
+<meta name="description" content="Calmdeck is a private, offline app for iPhone, Android and desktop: budget, safe-to-spend, subscription tracker, habits and goals in one app. No account, no cloud, no subscription. Pay once, own it forever.">
+<link rel="canonical" href="https://ilostmywallet2000.github.io/calmdeck/">
+<!--ALT--><link rel="alternate" hreflang="en" href="https://ilostmywallet2000.github.io/calmdeck/"><link rel="alternate" hreflang="es" href="https://ilostmywallet2000.github.io/calmdeck/es/"><link rel="alternate" hreflang="ru" href="https://ilostmywallet2000.github.io/calmdeck/ru/"><link rel="alternate" hreflang="x-default" href="https://ilostmywallet2000.github.io/calmdeck/"><meta property="og:locale" content="en_US"><!--/ALT-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calmdeck: Your life, steady.">
+<meta property="og:description" content="Budget, subscriptions, habits and goals in one private app that works offline. No account. No subscription. $19 once.">
+<meta property="og:url" content="https://ilostmywallet2000.github.io/calmdeck/">
+<meta property="og:image" content="https://ilostmywallet2000.github.io/calmdeck/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#2f5bea">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f5bea'/%3E%3Cpath d='M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Calmdeck","applicationCategory":"FinanceApplication","operatingSystem":"Any (runs in your web browser)","offers":{"@type":"Offer","price":"19.00","priceCurrency":"USD"},"description":"Private, offline personal command center: budgets, safe-to-spend, subscription tracker, habits, goals and weekly focus."}
+</script>
+<style>
+:root{
+  --bg:#fbfaf7;--bg-2:#f3f1ec;--panel:#fff;--ink:#121418;--ink-2:#40444d;--muted:#6f737c;--line:#e7e4dd;
+  --accent:#2f5bea;--accent-2:#1d3fbf;--accent-soft:#eaf0ff;--good:#14855a;
+  --r:18px;--max:1160px;
+  --shadow:0 1px 2px rgba(18,20,24,.05),0 12px 40px rgba(18,20,24,.07);
+  --font:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0c0e12;--bg-2:#12151b;--panel:#161920;--ink:#eef0f4;--ink-2:#c3c7d0;--muted:#8d93a0;--line:#252932;
+  --accent:#6f8cff;--accent-2:#8aa2ff;--accent-soft:#1a2240;--good:#3ccf8e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px rgba(0,0,0,.35);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img,svg{display:block}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+/* nav */
+.top{position:sticky;top:0;z-index:50;backdrop-filter:saturate(1.6) blur(14px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid transparent;transition:border-color .2s}
+.top.scrolled{border-bottom-color:var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:750;font-size:19px;letter-spacing:-.02em;text-decoration:none}
+.logo svg{width:30px;height:30px}
+.links{display:flex;gap:30px;align-items:center}
+.links a{text-decoration:none;color:var(--ink-2);font-weight:500;font-size:15px}
+.lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:10px;padding:2px;background:var(--bg-2)}
+.lang a{font-size:12.5px;font-weight:650;padding:4px 8px;border-radius:7px;color:var(--muted);letter-spacing:.02em}
+.lang a:hover{color:var(--ink)}
+.lang a.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:12px;font-weight:600;font-size:15.5px;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.primary{background:var(--accent);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){.btn.primary{color:#0b0d12}}
+.btn.primary:hover{background:var(--accent-2)}
+.btn.sm{padding:8px 16px;font-size:14.5px;border-radius:10px}
+.btn.lg{padding:15px 28px;font-size:16.5px;border-radius:14px}
+/* hero */
+.hero{padding:76px 0 40px;text-align:center;position:relative}
+.hero::before{content:"";position:absolute;inset:-120px 0 auto 0;height:620px;background:radial-gradient(600px 300px at 50% 20%,var(--accent-soft),transparent 70%);z-index:-1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border:1px solid var(--line);background:var(--panel);border-radius:99px;font-size:13.5px;font-weight:550;color:var(--ink-2)}
+.eyebrow b{background:var(--accent-soft);color:var(--accent);padding:2px 9px;border-radius:99px;font-size:12px}
+h1{font-size:clamp(40px,6.4vw,74px);line-height:1.02;letter-spacing:-.045em;margin:22px auto 20px;max-width:900px;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),#7a5af8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--ink-2);max-width:640px;margin:0 auto 32px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.trust{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:22px;color:var(--muted);font-size:14px}
+.trust span{display:inline-flex;align-items:center;gap:7px}
+.trust svg{width:16px;height:16px;color:var(--good)}
+/* device */
+.device{margin:56px auto 0;max-width:1100px;border-radius:16px;border:1px solid var(--line);background:var(--panel);box-shadow:0 30px 90px rgba(20,30,70,.16),0 2px 6px rgba(0,0,0,.05);overflow:hidden}
+.chrome{height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--bg-2)}
+.chrome i{width:11px;height:11px;border-radius:50%;background:#e2ded6}
+.chrome i:nth-child(1){background:#ff5f57}.chrome i:nth-child(2){background:#febc2e}.chrome i:nth-child(3){background:#28c840}
+.chrome .url{margin:0 auto;font-size:12.5px;color:var(--muted);background:var(--panel);padding:3px 16px;border-radius:7px;border:1px solid var(--line);display:flex;gap:6px;align-items:center}
+.screen{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden}
+.screen iframe{position:absolute;top:0;left:0;width:1280px;height:800px;border:0;transform-origin:0 0}
+.screen-note{font-size:13.5px;color:var(--muted);margin-top:14px}
+/* sections */
+section{padding:96px 0}
+.kicker{color:var(--accent);font-weight:650;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+h2{font-size:clamp(30px,4vw,46px);line-height:1.08;letter-spacing:-.035em;margin:12px 0 16px;font-weight:780}
+.sub{color:var(--ink-2);font-size:18px;max-width:640px}
+.center{text-align:center}.center .sub{margin:0 auto}
+/* problem */
+.stack{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}
+.apps{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 22px;box-shadow:var(--shadow)}
+.apps .r{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-top:1px solid var(--line);gap:12px}
+.apps .r:first-child{border-top:0}
+.apps .r span{color:var(--ink-2)}
+.apps .r b{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);text-decoration:line-through;font-weight:550}
+.apps .tot{display:flex;justify-content:space-between;align-items:center;padding:18px 0 14px;border-top:2px solid var(--ink);font-weight:700;font-size:18px}
+.apps .tot b{color:var(--accent);font-size:24px;letter-spacing:-.02em}
+/* features */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px}
+.feats.two{grid-template-columns:repeat(2,1fr)}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:28px;transition:transform .2s,box-shadow .2s}
+.feat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.feat .ico{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin-bottom:18px}
+.feat .ico svg{width:22px;height:22px}
+.feat h3{margin:0 0 8px;font-size:18.5px;letter-spacing:-.015em}
+.feat p{margin:0;color:var(--ink-2);font-size:15.5px}
+/* privacy */
+.dark{background:#0f1218;color:#eef0f4;border-radius:28px;padding:72px clamp(24px,5vw,72px);display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;position:relative;overflow:hidden}
+.dark::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;background:radial-gradient(circle,rgba(111,140,255,.35),transparent 65%)}
+.dark h2{color:#fff}.dark .sub{color:#b8bdc9}
+.dark .kicker{color:#8aa2ff}
+.checks{list-style:none;padding:0;margin:0;display:grid;gap:14px;position:relative;z-index:1}
+.checks li{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:14px 16px;border-radius:14px;color:#dfe2ea}
+.checks svg{width:20px;height:20px;color:#3ccf8e;flex:none;margin-top:2px}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px;counter-reset:s}
+.step{padding:28px;border-radius:var(--r);border:1px dashed var(--line);position:relative}
+.step::before{counter-increment:s;content:counter(s);width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;margin-bottom:16px}
+.step h3{margin:0 0 6px;font-size:18px}.step p{margin:0;color:var(--ink-2);font-size:15.5px}
+/* pricing */
+.price-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:12px}
+.price{background:var(--panel);border:2px solid var(--accent);border-radius:24px;padding:36px;box-shadow:0 24px 70px rgba(47,91,234,.14);position:relative}
+.price .tag{position:absolute;top:-13px;left:36px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:99px;letter-spacing:.02em}
+.price .amt{font-size:64px;font-weight:800;letter-spacing:-.05em;line-height:1}
+.price .amt small{font-size:18px;color:var(--muted);font-weight:550;letter-spacing:0;margin-left:6px}
+.price ul{list-style:none;padding:0;margin:26px 0 28px;display:grid;gap:11px}
+.price li{display:flex;gap:10px;align-items:flex-start;color:var(--ink-2)}
+.price li svg{width:19px;height:19px;color:var(--good);flex:none;margin-top:3px}
+.price .btn{width:100%}
+.fine{font-size:13.5px;color:var(--muted);text-align:center;margin-top:12px}
+.math{display:grid;gap:14px}
+.math .m{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line)}
+.math .m span{color:var(--ink-2)}.math .m b{font-size:20px;letter-spacing:-.02em}
+/* faq */
+.faq{max-width:780px;margin:44px auto 0}
+details{border-bottom:1px solid var(--line);padding:6px 0}
+summary{cursor:pointer;list-style:none;font-weight:600;font-size:17.5px;padding:16px 36px 16px 0;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:4px;top:12px;font-size:24px;color:var(--muted);font-weight:400;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:0 0 18px;color:var(--ink-2)}
+/* final */
+.final{text-align:center;padding:90px 24px;border-radius:28px;background:linear-gradient(140deg,var(--accent-soft),var(--panel) 60%);border:1px solid var(--line)}
+footer{padding:44px 0 56px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{text-decoration:none;margin-left:22px}footer a:hover{color:var(--ink)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+@media (max-width:900px){
+  .links>a:not(.btn){display:none}
+}
+@media (max-width:420px){
+  .logo{font-size:0;gap:0}
+  .lang a{padding:4px 6px}
+  .links{gap:10px}
+  .stack,.dark,.price-wrap{grid-template-columns:1fr}
+  .feats,.steps,.feats.two{grid-template-columns:1fr}
+  section{padding:68px 0}
+  .hero{padding-top:48px}
+  .wrap{padding:0 16px}
+  footer a{margin:0 18px 0 0}
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>Calmdeck</a>
+    <nav class="links">
+      <a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+      <!--LANG--><div class="lang" role="group" aria-label="Language"><a href="./" hreflang="en" lang="en" title="English" class="on" aria-current="page">EN</a><a href="./es/" hreflang="es" lang="es" title="Español">ES</a><a href="./ru/" hreflang="ru" lang="ru" title="Русский">RU</a></div><!--/LANG-->
+      <a class="btn primary sm" href="#" data-buy>Get Calmdeck · $19</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><b>New</b> One app for the boring-but-important stuff</span>
+    <h1>Your money, habits and goals. <em>One quiet place.</em></h1>
+    <p class="lede">Calmdeck is a private command center for your life. See what you can safely spend today, find the subscriptions draining you, and keep your habits and goals moving. No account, no cloud, no monthly fee.</p>
+    <div class="cta">
+      <a class="btn primary lg" href="#" data-buy>Get Calmdeck for $19</a>
+      <a class="btn lg" href="demo/calmdeck.html?demo" target="_blank" rel="noopener">Try the live demo →</a>
+    </div>
+    <div class="trust">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>Pay once, own it forever</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>iPhone, Android, Mac &amp; PC</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>Works 100% offline</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>30-day money-back guarantee</span>
+    </div>
+    <div class="device reveal">
+      <div class="chrome"><i></i><i></i><i></i><div class="url"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Calmdeck, on your device</div></div>
+      <div class="screen" id="screen"><iframe src="demo/calmdeck.html?demo" title="Calmdeck live demo" loading="lazy" tabindex="-1"></iframe></div>
+    </div>
+    <p class="screen-note">That's the real app running live with sample data. <a href="demo/calmdeck.html?demo" target="_blank" rel="noopener">Open it full screen</a> and click around.</p>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="wrap stack">
+    <div class="reveal">
+      <div class="kicker">The problem</div>
+      <h2>Running your life shouldn't need five apps and five subscriptions.</h2>
+      <p class="sub">A budgeting app. A subscription tracker. A habit app. A goal planner. A to-do list. Each one wants an account, your data, and a monthly payment, and none of them talk to each other.</p>
+      <p class="sub" style="margin-top:14px">Calmdeck puts the essentials on one calm screen. You open it, see where you stand in ten seconds, and get on with your day.</p>
+    </div>
+    <div class="apps reveal">
+      <div class="r"><span>Budgeting app</span><b>$60–$110 / yr</b></div>
+      <div class="r"><span>Subscription tracker</span><b>$20–$50 / yr</b></div>
+      <div class="r"><span>Habit tracker</span><b>$20–$40 / yr</b></div>
+      <div class="r"><span>Goal &amp; weekly planner</span><b>$30–$60 / yr</b></div>
+      <div class="tot"><span>Calmdeck, all of it</span><b>$19 once</b></div>
+    </div>
+  </div>
+</section>
+
+<section id="features" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="kicker">Everything in one place</div>
+      <h2>Six tools that actually work together, plus a coach.</h2>
+      <p class="sub">Every feature answers one question you'd otherwise ask a different app.</p>
+    </div>
+    <div class="feats">
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M17 7.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 2.7 5 3.2 5 1.3 5 3.3-2.2 3-5 3-5-1.1-5-3"/></svg></div><h3>Safe to spend, today</h3><p>Calmdeck divides what's left of your monthly budget by the days left in the month, so you know exactly what you can spend today without guilt.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 2.5 21 6.5l-4 4M3 11.5v-1a4 4 0 0 1 4-4h14M7 21.5l-4-4 4-4M21 12.5v1a4 4 0 0 1-4 4H3"/></svg></div><h3>Subscription x-ray</h3><p>See every recurring charge as a yearly and 5-year cost, get warned before renewals, and flag the ones to cancel. Calmdeck shows you exactly how much you'll save.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 15h3"/></svg></div><h3>Budgets that pace you</h3><p>Set limits per category and watch color-coded bars as you go. Quick-add an expense in two seconds with a single key press.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></div><h3>Habit streaks</h3><p>A one-tap daily check-in with a 14-day grid, streaks and a 30-day consistency score. Simple enough that you'll actually keep using it.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div><h3>Goals, broken into steps</h3><p>Turn “someday” into a checklist with a deadline and a reason why. Progress bars show you're moving, and deadlines keep you honest.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></div><h3>A 10-second daily check-in</h3><p>The Today screen shows your spending, renewals, habits, goals and top weekly priorities together. It's the only dashboard you'll need.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="coach" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="kicker">Your coach</div>
+      <h2>It notices. It remembers. It helps.</h2>
+      <p class="sub">Calmdeck learns your patterns and turns them into plain-language nudges. Want to talk it through? Switch on the AI coach.</p>
+    </div>
+    <div class="feats two">
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg></div>
+        <h3>Calmdeck Brain <span style="font-size:12px;font-weight:700;color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent);padding:2px 8px;border-radius:99px;vertical-align:2px;margin-left:4px">Included</span></h3>
+        <p>Spots what you'd miss: “You spend most on Fridays”, “Spotify went up 9%”, “Your reading habit slips on weekends”, “Heading $120 over budget”. It runs entirely on your device, works offline, and keeps a profile of what matters to you that you can see and edit.</p></div>
+      <div class="feat reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div>
+        <h3>AI Coach <span style="font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:99px;vertical-align:2px;margin-left:4px">Optional</span></h3>
+        <p>Ask “Can I afford this trip?”, get a weekly review, plan your week, or have it draft a cancellation email. It uses your real numbers and remembers what you tell it. It's powered by Claude with your own Anthropic key, typically costing cents to a few euros a month, paid directly to Anthropic.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <div class="dark reveal">
+      <div>
+        <div class="kicker">Private by design</div>
+        <h2>Your finances are nobody's business. Not even ours.</h2>
+        <p class="sub">Calmdeck runs entirely on your phone or computer. It never asks for your bank login, and your data never goes to us, because there's nowhere for it to go. The only exception is the optional AI coach, and only while you chat with it.</p>
+      </div>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>No account, no sign-up, no login</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>No trackers or analytics. Data leaves your device only if you switch on the AI coach.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>No bank linking required, ever</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>One-click backup and CSV export. Your data is yours.</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>Can't be shut down, acquired or paywalled later</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="padding-top:20px">
+  <div class="wrap">
+    <div class="center reveal"><div class="kicker">How it works</div><h2>Up and running in a minute.</h2></div>
+    <div class="steps">
+      <div class="step reveal"><h3>Buy once</h3><p>Checkout takes 30 seconds. Right after payment you get your private app link and the offline file.</p></div>
+      <div class="step reveal"><h3>Add it to your home screen</h3><p>Open the link on your iPhone or Android and tap <b>Add to Home Screen</b>. Calmdeck gets its own icon, opens full-screen and works offline. It installs on Mac and PC too.</p></div>
+      <div class="step reveal"><h3>Take back control</h3><p>Add your subscriptions and a budget. You might be surprised what you find in the first five minutes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="price-wrap">
+      <div class="reveal">
+        <div class="kicker">Simple pricing</div>
+        <h2>One price. No subscription. Ever.</h2>
+        <p class="sub">Calmdeck pays for itself the first time it helps you cancel a subscription you forgot about.</p>
+        <div class="math" style="margin-top:28px">
+          <div class="m"><span>One forgotten $12/mo subscription</span><b>$144 / yr</b></div>
+          <div class="m"><span>Calmdeck</span><b style="color:var(--accent)">$19 once</b></div>
+        </div>
+      </div>
+      <div class="price reveal">
+        <span class="tag">LIFETIME LICENSE</span>
+        <div class="amt">$19<small>one-time</small></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>Budgets, safe-to-spend, subscriptions, habits, goals and weekly focus</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>Calmdeck Brain insights plus the optional AI coach</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>iPhone, Android, Mac, Windows and Chromebook</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>All future 1.x updates free</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>In English, Spanish and Russian. Light and dark mode, any currency</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17 19 7"/></svg>30-day no-questions-asked refund</li>
+        </ul>
+        <a class="btn primary lg" href="#" data-buy>Get Calmdeck now</a>
+        <p class="fine">Secure checkout · Instant download · Taxes calculated at checkout</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="center reveal"><div class="kicker">FAQ</div><h2>Questions, answered.</h2></div>
+    <div class="faq">
+      <details><summary>Does it work on my phone?</summary><p>Yes. After buying, open your private app link on your iPhone (Safari) or Android (Chrome) and tap <b>Add to Home Screen</b>. Calmdeck then opens from its own icon, full-screen, and works offline. There's no App Store download and no account. On a computer you can install it from Chrome or Edge, or use the offline file.</p></details>
+      <details><summary>Does my data sync between phone and computer?</summary><p>Not automatically. That's what keeps it private: there's no server holding your data. You can move everything between devices in seconds with Export backup and Import backup in Settings.</p></details>
+      <details><summary>Where is my data stored?</summary><p>Only on your device, and it works with Wi-Fi and mobile data off. If you connect the optional AI coach, a summary of your Calmdeck data goes straight from your device to Anthropic (the company behind Claude) while you chat. It never passes through us. Use “Export backup” in Settings regularly, and to move your data to another device, just import the backup there.</p></details>
+      <details><summary>Does it connect to my bank?</summary><p>No, and that's on purpose. Bank linking means handing your login to a third party. With Calmdeck you log what matters in a couple of seconds, and many people find it makes them more mindful of their spending.</p></details>
+      <details><summary>What if I clear my browser data?</summary><p>Clearing site data for the file can erase what Calmdeck stored, the same as with any local app. That's why there's a one-click backup. Keep a recent backup in your cloud drive of choice.</p></details>
+      <details><summary>How does the AI coach work, and what does it cost?</summary><p>It's optional. You create a free account at Anthropic, add a little credit (for example $5), and paste your key into Calmdeck. You then pay Anthropic only for what you use: with the default model, a typical month of chatting costs well under €1. Anthropic doesn't work in every country (for example, not in Russia). Calmdeck Brain's insights are always free and work everywhere without it.</p></details>
+      <details><summary>Is the AI coach a financial adviser or lawyer?</summary><p>No. It's an AI that helps you organise, plan and draft, using your own data. It can explain general concepts, but it won't recommend investments, and anything legal, tax-related or medical should be checked with a professional.</p></details>
+      <details><summary>Is it really a one-time payment?</summary><p>Yes. $19 once. No subscription, no upsells, and all 1.x updates are free.</p></details>
+      <details><summary>What if it's not for me?</summary><p>Message us within 30 days and you'll get a full refund. No questions asked.</p></details>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="final reveal">
+      <h2>Steady your money and your days.</h2>
+      <p class="sub" style="margin:0 auto 30px">Swap five apps and five subscriptions for one quiet place.</p>
+      <div class="cta"><a class="btn primary lg" href="#" data-buy>Get Calmdeck for $19</a><a class="btn lg" href="demo/calmdeck.html?demo" target="_blank" rel="noopener">Try the demo first</a></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© <span id="yr"></span> Calmdeck by Vitrina Studio. Made for people who like calm.</div>
+    <div><a href="#faq">FAQ</a><a href="https://wa.me/34692808027" target="_blank" rel="noopener">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div>
+  </div>
+</footer>
+
+<script>
+/* ========= CONFIG: paste your checkout link (Gumroad, Lemon Squeezy, Stripe Payment Link) ========= */
+const CHECKOUT_URL = 'https://app.lava.top/vitrinastudio'; // replace with the Calmdeck product link once it's live
+/* ================================================================================================= */
+document.querySelectorAll('[data-buy]').forEach(a=>{
+  a.href=CHECKOUT_URL;
+  a.addEventListener('click',e=>{if(CHECKOUT_URL.includes('YOUR-STORE')){e.preventDefault();alert('Checkout is not connected yet. Set CHECKOUT_URL in index.html.')}});
+});
+document.getElementById('yr').textContent=new Date().getFullYear();
+// Language: remember an explicit choice; on the English page, follow it (or the device language) once.
+(function(){
+  var K='keel-site-lang',saved=null;try{saved=localStorage.getItem(K)}catch(e){}
+  document.querySelectorAll('.lang a').forEach(function(a){a.addEventListener('click',function(){try{localStorage.setItem(K,a.getAttribute('hreflang'))}catch(e){}})});
+  if(document.documentElement.lang!=='en')return;
+  var want=saved||(navigator.language||'').slice(0,2).toLowerCase();
+  if(want==='es'||want==='ru')location.replace(want+'/'+location.hash);
+})();
+const top_=document.getElementById('top');
+addEventListener('scroll',()=>top_.classList.toggle('scrolled',scrollY>8),{passive:true});
+const screen=document.getElementById('screen'),fr=screen.querySelector('iframe');
+const fit=()=>{const s=screen.clientWidth/1280;fr.style.transform=`scale(${s})`;screen.style.height=(800*s)+'px'};
+new ResizeObserver(fit).observe(screen);fit();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+setTimeout(()=>document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in')),2500);
+</script>
+</body>
+</html>

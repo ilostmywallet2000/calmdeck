@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Calmdeck — Personal Command Center</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Calmdeck">
+<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1014" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f5bea'/%3E%3Cpath d='M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f5f1;--panel:#ffffff;--panel-2:#faf9f6;--ink:#15171c;--ink-2:#3b3f48;--muted:#71757e;--line:#e8e6e0;
+  --accent:#2f5bea;--accent-ink:#ffffff;--accent-soft:#eaf0ff;--good:#14855a;--good-soft:#e5f5ee;--warn:#b86e00;--warn-soft:#fdf2e1;--bad:#c63a3a;--bad-soft:#fdeaea;
+  --r:14px;--shadow:0 1px 2px rgba(20,22,28,.04),0 6px 24px rgba(20,22,28,.05);
+  --font:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+:root[data-theme=dark]{
+  --bg:#0e1014;--panel:#161920;--panel-2:#1b1f27;--ink:#eceef3;--ink-2:#c4c8d1;--muted:#8d93a0;--line:#262a33;
+  --accent:#7090ff;--accent-ink:#0b0d12;--accent-soft:#1c2440;--good:#3ccf8e;--good-soft:#12271f;--warn:#f0a83a;--warn-soft:#2a2112;--bad:#ff6b6b;--bad-soft:#2c1717;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100%}
+.side{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--line);background:var(--panel-2);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em;padding:4px 10px 18px}
+.brand svg{width:28px;height:28px}
+.nav{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:var(--ink-2);text-decoration:none;font-weight:500;border:0;background:none;width:100%;text-align:left;cursor:pointer}
+.nav svg{width:18px;height:18px;flex:none;opacity:.8}
+.nav:hover{background:var(--line)}
+.nav.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.nav.on svg{color:var(--accent);opacity:1}
+.side .foot{margin-top:auto;padding:12px;color:var(--muted);font-size:12px;line-height:1.45}
+.lock{display:inline-flex;gap:6px;align-items:center}
+main{padding:34px clamp(16px,4vw,48px) 90px;max-width:1180px;width:100%}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.head h1{font-size:28px;letter-spacing:-.025em;margin:0;line-height:1.15}
+.head p{margin:4px 0 0;color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px;box-shadow:var(--shadow);min-width:0}
+.card h2{font-size:14px;margin:0 0 12px;font-weight:650;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h2 small{font-weight:500;color:var(--muted);font-size:12.5px}
+.stat .k{color:var(--muted);font-size:12.5px;font-weight:500}
+.stat .v{font-size:25px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+.pos{color:var(--good)}.neg{color:var(--bad)}.wrn{color:var(--warn)}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:550;font-size:13.5px;line-height:1.2;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.danger{color:var(--bad)}
+.icon-btn{border:0;background:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:7px;display:inline-flex}
+.icon-btn:hover{background:var(--line);color:var(--ink)}
+.icon-btn svg{width:16px;height:16px}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:10px 2px;border-top:1px solid var(--line)}
+.li:first-child{border-top:0}
+.li .grow{flex:1;min-width:0}
+.li .t{font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .m{color:var(--muted);font-size:12.5px}
+.amt{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.check{width:22px;height:22px;border-radius:7px;border:1.6px solid var(--line);background:var(--panel);display:grid;place-items:center;cursor:pointer;flex:none;padding:0;transition:.15s}
+.check:hover{border-color:var(--accent)}
+.check.on{background:var(--accent);border-color:var(--accent)}
+.check svg{width:13px;height:13px;color:var(--accent-ink);opacity:0}
+.check.on svg{opacity:1}
+.done .t{text-decoration:line-through;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.bar.good i{background:var(--good)}.bar.warn i{background:var(--warn)}.bar.bad i{background:var(--bad)}
+.pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:600;background:var(--line);color:var(--ink-2)}
+.pill.good{background:var(--good-soft);color:var(--good)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.acc{background:var(--accent-soft);color:var(--accent)}
+.empty{color:var(--muted);padding:18px 4px;text-align:center;font-size:13.5px}
+.dots{display:flex;gap:4px}
+.dot{width:20px;height:20px;border-radius:6px;background:var(--line);border:0;cursor:pointer;padding:0}
+.dot.on{background:var(--good)}
+.dot.today{outline:2px solid var(--accent);outline-offset:1px}
+.callout{background:var(--accent-soft);border:1px solid transparent;border-radius:var(--r);padding:16px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.callout b{color:var(--accent)}
+.welcome{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:1px solid var(--line);border-radius:18px;padding:26px;margin-bottom:20px}
+.welcome h2{margin:0 0 6px;font-size:20px;letter-spacing:-.02em}
+.welcome p{margin:0 0 16px;color:var(--ink-2);max-width:620px}
+.inline-add{display:flex;gap:8px;margin-top:10px}
+.inp,.fm input,.fm select,.fm textarea{width:100%;border:1px solid var(--line);background:var(--panel-2);border-radius:9px;padding:8px 11px;outline:none}
+.inp:focus,.fm input:focus,.fm select:focus,.fm textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+dialog{border:1px solid var(--line);border-radius:18px;padding:0;background:var(--panel);color:var(--ink);width:min(440px,calc(100vw - 32px));box-shadow:0 20px 70px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(10,12,16,.45);backdrop-filter:blur(3px)}
+.fm{padding:22px}
+.fm h3{margin:0 0 16px;font-size:17px}
+.fm label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin:0 0 12px}
+.fm label span{display:block;margin-bottom:5px}
+.fm .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.seg{display:inline-flex;background:var(--line);padding:3px;border-radius:10px;gap:2px}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:8px;cursor:pointer;font-weight:550;font-size:13px;color:var(--ink-2)}
+.seg button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.goal{display:flex;flex-direction:column;gap:12px}
+.goal .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.goal h3{margin:0;font-size:16px;letter-spacing:-.01em}
+.goal .why{color:var(--muted);font-size:13px;margin-top:2px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:550;opacity:0;transition:.25s;pointer-events:none;z-index:99}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--muted)}
+.mnav{display:none}
+.tbl{width:100%;border-collapse:collapse}
+.tbl td,.tbl th{padding:10px 8px;border-top:1px solid var(--line);text-align:left;vertical-align:middle}
+.tbl th{font-size:12px;color:var(--muted);font-weight:600;border-top:0}
+.tbl .r{text-align:right}
+.scroll{overflow-x:auto}
+.daygrp{font-size:12px;color:var(--muted);font-weight:600;padding:14px 2px 4px;text-transform:uppercase;letter-spacing:.04em}
+@media (max-width:1000px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  main{min-width:0}
+  .dots{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;width:100%}
+  .dot{width:auto;height:auto;aspect-ratio:1}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--line);z-index:20;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .mnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;font-size:10.5px;color:var(--muted);padding:6px 0;cursor:pointer;font-weight:550}
+  .mnav button svg{width:20px;height:20px}
+  .mnav button.on{color:var(--accent)}
+  main{padding-top:22px}
+  .g3,.g2{grid-template-columns:1fr}
+  .head h1{font-size:24px}
+  .hide-m{display:none}
+  main{padding-top:calc(20px + env(safe-area-inset-top));padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  .inp,.fm input,.fm select,.fm textarea{font-size:16px;padding:11px 12px}
+  .check{width:26px;height:26px}
+  .icon-btn{padding:8px}
+  .btn{padding:10px 16px}
+  dialog{margin:auto 0 0;width:100%;max-width:100%;border-radius:22px 22px 0 0;border-bottom:0;max-height:92vh;overflow:auto}
+  .fm{padding:22px 18px calc(22px + env(safe-area-inset-bottom))}
+  .fm-actions .btn{flex:1;justify-content:center;padding:13px}
+  .stat .v{font-size:22px}
+}
+.install{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;box-shadow:var(--shadow)}
+.install .ico{width:40px;height:40px;flex:none}
+.install p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.install b{color:var(--ink)}
+.share-ic{display:inline-block;vertical-align:-3px;width:16px;height:16px;color:var(--accent)}
+/* Calmdeck Brain + Coach */
+.ins{display:flex;gap:12px;padding:12px 2px;border-top:1px solid var(--line);align-items:flex-start}
+.ins:first-child{border-top:0}
+.ins .dotc{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:16px;background:var(--line)}
+.ins.good .dotc{background:var(--good-soft)}.ins.warn .dotc{background:var(--warn-soft)}.ins.bad .dotc{background:var(--bad-soft)}.ins.info .dotc{background:var(--accent-soft)}
+.ins b{display:block;font-weight:600;margin-bottom:1px}
+.ins span{color:var(--ink-2);font-size:13.5px}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:260px;max-height:min(58vh,560px);overflow-y:auto;padding:6px 2px 10px;overscroll-behavior:contain}
+.msg{max-width:86%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:5px}
+.msg.assistant{align-self:flex-start;background:var(--panel-2);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.err{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.msg .saved{margin-top:8px;font-size:12px;color:var(--good);font-weight:600;white-space:normal}
+.typing{color:var(--muted)}.typing::after{content:'…';animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:6px 12px;font-size:12.5px;font-weight:550;cursor:pointer;color:var(--ink-2)}
+.chip:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.chip:disabled,.btn:disabled{opacity:.5;cursor:not-allowed}
+.composer{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:12px}
+.composer textarea{flex:1;resize:none;min-height:44px;max-height:160px;field-sizing:content}
+.ai-label{font-size:11.5px;color:var(--muted);margin-top:3px}
+.m-only{display:none}
+@media (max-width:760px){.m-only{display:inline-flex}.msg{max-width:92%}.chat{max-height:52vh}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main id="main"></main>
+</div>
+<nav class="mnav" id="mnav"></nav>
+<dialog id="dlg"></dialog>
+<input type="file" id="file" accept="application/json,.json" hidden>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{
+'use strict';
+/* ---------- utilities ---------- */
+const QS=new URLSearchParams(location.search);
+const DEMO=QS.has('demo');
+const KEY=DEMO?'keel-demo-v1':'keel-v1';
+const WEB=/^https?:$/.test(location.protocol);
+const STANDALONE=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let installEvt=null;
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-3);
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)};
+const today=()=>iso(new Date());
+const dt=s=>new Date(s+'T12:00:00');
+const addDays=(s,n)=>{const d=dt(s);d.setDate(d.getDate()+n);return iso(d)};
+const addMonths=(s,n)=>{const d=dt(s),day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+n);const max=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(day,max));return iso(d)};
+const diffDays=(a,b)=>Math.round((dt(b)-dt(a))/864e5);
+const daysInMonth=m=>{const[y,mo]=m.split('-').map(Number);return new Date(y,mo,0).getDate()};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const weekStart=s=>{const d=dt(s);const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return iso(d)};
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+
+/* ---------- languages ---------- */
+// Translations are keyed by the English text. A plural key holds "one|other" forms
+// (Russian: "one|few|many"), picked with Intl.PluralRules.
+const I18N=/*I18N*/{"es":{"Today":"Hoy","Money":"Dinero","Subscriptions":"Suscripciones","Subs":"Suscrip.","Habits":"Hábitos","Goals":"Metas","Coach":"Coach","Settings":"Ajustes","Yesterday":"Ayer","Add":"Añadir","Edit":"Editar","Delete":"Eliminar","Remove":"Quitar","Toggle":"Marcar","Cancel":"Cancelar","Save":"Guardar","Close":"Cerrar","Saved":"Guardado","Optional":"Opcional","Private & offline":"Privado y sin conexión","Your data stays on this device.":"Tus datos se quedan en este dispositivo.","{b}Live demo{/b} with sample data. Click around freely; changes reset when you reload.":"{b}Demo en vivo{/b} con datos de ejemplo. Explora libremente; los cambios se borran al recargar.","Get Calmdeck":"Consigue Calmdeck","Housing":"Vivienda","Food":"Comida","Transport":"Transporte","Shopping":"Compras","Health":"Salud","Fun":"Ocio","Bills":"Facturas","Other":"Otros","Income":"Ingresos","Expense":"Gasto","Weekly":"Semanal","Monthly":"Mensual","Quarterly":"Trimestral","Yearly":"Anual","Good morning":"Buenos días","Good afternoon":"Buenas tardes","Good evening":"Buenas noches","Here's where things stand.":"Así van las cosas.","Add expense":"Añadir gasto","Welcome to Calmdeck":"Bienvenido a Calmdeck","Your money, subscriptions, habits and goals in one calm place. Everything is stored only on this device, with no account and no cloud. Start with sample data to look around, or start fresh.":"Tu dinero, suscripciones, hábitos y metas en un solo lugar tranquilo. Todo se guarda solo en este dispositivo, sin cuenta y sin nube. Empieza con datos de ejemplo para explorar o empieza desde cero.","Explore with sample data":"Explorar con datos de ejemplo","Start fresh":"Empezar desde cero","Spent this month":"Gastado este mes","of {x} budget":"de un presupuesto de {x}","Set a budget":"Fija un presupuesto","Safe to spend / day":"Puedes gastar / día","{n} day left in {month}|{n} days left in {month}":"Queda {n} día de {month}|Quedan {n} días de {month}","Subscriptions / year":"Suscripciones / año","{n} active|{n} active":"{n} activa|{n} activas","{x}/mo":"{x}/mes","Habits today":"Hábitos de hoy","All done. Nice.":"Todo hecho. ¡Bien!","Keep the chain going":"Mantén la racha","Add your first habit":"Añade tu primer hábito","This week's focus":"Prioridades de la semana","Top priorities, max 5":"Máximo 5 prioridades","What would make this week a win?":"¿Qué haría de esta semana un éxito?","Add a priority and press Enter":"Añade una prioridad y pulsa Intro","Today's habits":"Hábitos de hoy","All habits":"Todos","No habits yet.":"Aún no hay hábitos.","Add one":"Añade uno","Upcoming renewals":"Próximas renovaciones","Next 14 days":"Próximos 14 días","Renews today":"Se renueva hoy","Tomorrow":"Mañana","In {n} day|In {n} days":"En {n} día|En {n} días","Nothing renewing in the next two weeks.":"Nada se renueva en las próximas dos semanas.","Goals in progress":"Metas en curso","All goals":"Todas","No active goals.":"No hay metas activas.","Set one":"Crea una","Install Calmdeck on your {device}.":"Instala Calmdeck en tu {device}.","Tap {icon} Share, then {b}Add to Home Screen{/b}. Do it before adding data, because the installed app keeps its own separate storage.":"Toca {icon} Compartir y luego {b}Añadir a pantalla de inicio{/b}. Hazlo antes de añadir datos, porque la app instalada guarda sus datos por separado.","Dismiss":"Cerrar","Install Calmdeck as an app.":"Instala Calmdeck como app.","One tap. It works offline, with its own icon and window.":"Un toque. Funciona sin conexión, con su propio icono y ventana.","Not now":"Ahora no","Install":"Instalar","Calmdeck installed":"Calmdeck instalado","Track what comes in, what goes out, and where it goes.":"Controla lo que entra, lo que sale y adónde va.","Previous month":"Mes anterior","Next month":"Mes siguiente","Spent":"Gastado","Net":"Neto","{p}% savings rate":"{p}% de ahorro","Budgets":"Presupuestos","Edit budgets":"Editar presupuestos","no budget":"sin presupuesto","Set monthly limits per category to see how you're pacing.":"Fija límites mensuales por categoría para ver cómo vas.","Transactions":"Movimientos","This month: {n}":"Este mes: {n}","Export CSV":"Exportar CSV","No transactions this month yet.":"Aún no hay movimientos este mes.","See every recurring charge, and what it really costs per year.":"Mira cada cargo recurrente y lo que de verdad cuesta al año.","Add subscription":"Añadir suscripción","Per month":"Al mes","Per year":"Al año","Subscriptions: {n}":"Suscripciones: {n}","Over 5 years":"En 5 años","if nothing changes":"si nada cambia","Cancelling your {b}{n} flagged{/b} subscription would save {b}{x}/year{/b}.|Cancelling your {b}{n} flagged{/b} subscriptions would save {b}{x}/year{/b}.":"Cancelar tu {b}suscripción marcada{/b} te ahorraría {b}{x} al año{/b}.|Cancelar tus {b}{n} suscripciones marcadas{/b} te ahorraría {b}{x} al año{/b}.","Flag ones you rarely use with {icon}":"Marca con {icon} las que casi no usas","Name":"Nombre","Billing":"Cobro","Next renewal":"Próxima renovación","Cost":"Coste","Review":"Revisar","today":"hoy","{n}d":"{n} d","Flag for review":"Marcar para revisar","Add streaming, software, gym and cloud storage. It's easy to forget one or two.":"Añade streaming, software, gimnasio y almacenamiento en la nube. Es fácil olvidar alguna.","Small things, done daily. Tap a square to mark a day.":"Cosas pequeñas, cada día. Toca un cuadrado para marcar un día.","New habit":"Nuevo hábito","{n} day streak|{n} day streak":"Racha de {n} día|Racha de {n} días","{p}% last 30 days":"{p}% en los últimos 30 días","Try “Walk 20 minutes”, “Read 10 pages” or “No phone after 10pm”.":"Prueba «Caminar 20 minutos», «Leer 10 páginas» o «Sin móvil después de las 22:00».","Break big things into steps you can actually take.":"Divide lo grande en pasos que de verdad puedas dar.","New goal":"Nueva meta","Done":"Hecho","{n}d overdue":"{n} d de retraso","{n}d left":"quedan {n} d","Steps: {a} of {b}":"Pasos: {a} de {b}","Add a step…":"Añade un paso…","No goals yet. What do you want to be true 90 days from now?":"Aún no hay metas. ¿Qué quieres que sea verdad dentro de 90 días?","Calmdeck stores everything in this browser on this device. Back up regularly.":"Calmdeck guarda todo en este navegador, en este dispositivo. Haz copias de seguridad a menudo.","Preferences":"Preferencias","Language":"Idioma","Auto (device language)":"Automático (idioma del dispositivo)","Your first name":"Tu nombre","Currency symbol":"Símbolo de moneda","Theme":"Tema","Auto":"Automático","Light":"Claro","Dark":"Oscuro","Your data":"Tus datos","Your data stays on this device. Calmdeck never sends it anywhere, unless you connect the optional AI Coach, which shares a summary only while you chat. To move to another device, export a backup and import it there.":"Tus datos se quedan en este dispositivo. Calmdeck nunca los envía a ningún sitio, salvo que conectes el AI Coach opcional, que comparte un resumen solo mientras chateas. Para pasar a otro dispositivo, exporta una copia e impórtala allí.","Export backup":"Exportar copia","Import backup":"Importar copia","Transactions CSV":"Movimientos CSV","Load sample data":"Cargar datos de ejemplo","Erase everything":"Borrar todo","Running as an installed app.":"Funcionando como app instalada.","Keyboard: {n} new expense · {r} switch sections":"Teclado: {n} nuevo gasto · {r} cambiar sección","Monthly budget used up":"Presupuesto del mes agotado","You've spent {x} of {y} with {n} day left.|You've spent {x} of {y} with {n} days left.":"Has gastado {x} de {y} y queda {n} día.|Has gastado {x} de {y} y quedan {n} días.","Heading about {x} over budget":"Vas a pasarte unos {x} del presupuesto","At this pace you'll spend around {x} this month. Keeping to {y} a day brings you back on track.":"A este ritmo gastarás unos {x} este mes. Si te mantienes en {y} al día, volverás al buen camino.","Right at your limit":"Justo en tu límite","At this pace you'll spend around {x}, just over your {y} budget. A few small cuts keep you inside it.":"A este ritmo gastarás unos {x}, algo más de tu presupuesto de {y}. Unos pequeños recortes te mantendrán dentro.","On track this month":"Vas bien este mes","At this pace you'll spend around {x}, inside your {y} budget.":"A este ritmo gastarás unos {x}, dentro de tu presupuesto de {y}.","{c} is over budget":"{c}: presupuesto superado","{x} spent of {y}, {z} over.":"{x} gastados de {y}, {z} de más.","{c} budget almost used":"{c}: presupuesto casi agotado","{p}% used with {n} day still to go.|{p}% used with {n} days still to go.":"{p}% usado y aún queda {n} día.|{p}% usado y aún quedan {n} días.","{c} spending up {p}%":"{c}: gasto +{p}%","{x} so far this month vs {y} by the same day last month.":"{x} en lo que va de mes frente a {y} el mismo día del mes pasado.","{c} spending down {p}%":"{c}: gasto −{p}%","{x} so far vs {y} by this point last month.":"{x} hasta ahora frente a {y} a estas alturas del mes pasado.","You spend most {day}":"Gastas más {day}","About {p}% more than your average day over the last two months, not counting rent and bills.":"Un {p}% más que un día normal en los últimos dos meses, sin contar alquiler ni facturas.","Last month you saved {p}% of your income":"El mes pasado ahorraste el {p}% de tus ingresos","That's a strong savings rate. Keep it up.":"Es una muy buena tasa de ahorro. ¡Sigue así!","A common target is 20%. Small cuts add up fast.":"Una meta habitual es el 20%. Los pequeños recortes suman rápido.","You spent more than you earned last month.":"El mes pasado gastaste más de lo que ganaste.","Subscriptions take {p}% of your income":"Las suscripciones se llevan el {p}% de tus ingresos","That's {x} a month, or {y} a year.":"Son {x} al mes, o {y} al año.","Save {x} a year":"Ahorra {x} al año","by cancelling the subscriptions you flagged: {list}.":"cancelando las suscripciones que marcaste: {list}.","{s} went up {p}%":"{s} subió un {p}%","From {x} to {y}. That's {z} more per year.":"De {x} a {y}. Son {z} más al año.","{s} renews today":"{s} se renueva hoy","{s} renews tomorrow":"{s} se renueva mañana","{s} renews in {n} day|{s} renews in {n} days":"{s} se renueva en {n} día|{s} se renueva en {n} días","{x} will be charged. Still worth it?":"Se cobrarán {x}. ¿Aún te compensa?","Big renewal coming: {s}":"Renovación importante: {s}","{x} on {d}. Cancel before then if you don't need it.":"{x} el {d}. Cancela antes si no la necesitas.","Keep your {n}-day streak alive|Keep your {n}-day streak alive":"No pierdas tu racha de {n} día|No pierdas tu racha de {n} días","“{h}” isn't checked off yet today.":"«{h}» aún no está marcado hoy.","“{h}” slips on weekends":"«{h}» falla los fines de semana","Done on {a}% of weekdays but {b}% of weekends over the last 4 weeks. Try a weekend-specific time or cue.":"Cumplido el {a}% de los días laborables pero solo el {b}% de los fines de semana en las últimas 4 semanas. Prueba una hora o señal especial para el fin de semana.","{n}-day streak: {h}|{n}-day streak: {h}":"Racha de {n} día: {h}|Racha de {n} días: {h}","Consistency like this is what makes a habit stick.":"Esta constancia es lo que consolida un hábito.","Break “{g}” into steps":"Divide «{g}» en pasos","Goals with small, concrete steps are far more likely to get done.":"Las metas con pasos pequeños y concretos se cumplen mucho más.","“{g}” is {n} day overdue|“{g}” is {n} days overdue":"«{g}» lleva {n} día de retraso|«{g}» lleva {n} días de retraso","{p}% done. Set a new realistic date, or cut the scope.":"{p}% hecho. Pon una nueva fecha realista o reduce el alcance.","“{g}” is due in {n} day|“{g}” is due in {n} days":"«{g}» vence en {n} día|«{g}» vence en {n} días","Only {p}% done. What's the one next step?":"Solo un {p}% hecho. ¿Cuál es el siguiente paso?","Typically spends about {x} a month (average of the last {n} month).|Typically spends about {x} a month (average of the last {n} months).":"Suele gastar unos {x} al mes (media del último mes).|Suele gastar unos {x} al mes (media de los últimos {n} meses).","Typical monthly income: about {x}.":"Ingresos mensuales habituales: unos {x}.","Biggest spending areas lately: {list}.":"Mayores gastos últimamente: {list}.","Spends the most {day}.":"Gasta más {day}.","Subscriptions: {n}, costing {x} a year.":"Suscripciones: {n}, por {x} al año.","Most consistent habit: “{h}” ({p}% of days).":"Hábito más constante: «{h}» ({p}% de los días).","Hardest habit to keep: “{h}” ({p}% of days).":"Hábito más difícil: «{h}» ({p}% de los días).","Goals: {n}, completed: {d}.":"Metas: {n}, cumplidas: {d}.","Calmdeck noticed":"Calmdeck ha notado","See all":"Ver todo","Fastest and cheapest. Typically under €1 a month":"El más rápido y barato. Normalmente menos de 1 € al mes","Smarter and more thoughtful. Typically €2–12 a month":"Más inteligente y reflexivo. Normalmente 2–12 € al mes","Most capable, highest cost":"El más capaz, el más caro","Your Anthropic account is out of credit. Add credit at console.anthropic.com, under Billing.":"Tu cuenta de Anthropic no tiene saldo. Añade saldo en console.anthropic.com, en Billing.","Anthropic rejected that API key. Check it in Coach → AI Coach → Settings.":"Anthropic rechazó esa clave de API. Revísala en Coach → AI Coach → Ajustes.","This API key isn't allowed to use that model.":"Esta clave de API no puede usar ese modelo.","That model isn't available on your account. Pick another model in Settings.":"Ese modelo no está disponible en tu cuenta. Elige otro en Ajustes.","Too many requests, or your spend limit was reached. Wait a minute, or check your limits at console.anthropic.com.":"Demasiadas solicitudes o has alcanzado tu límite de gasto. Espera un minuto o revisa tus límites en console.anthropic.com.","The AI service is busy right now. Try again in a moment.":"El servicio de IA está ocupado. Inténtalo de nuevo en un momento.","The AI service returned an error.":"El servicio de IA devolvió un error.","Couldn't reach the AI service. Check your internet connection.":"No se pudo conectar con el servicio de IA. Revisa tu conexión a internet.","Thinking":"Pensando","Remembered:":"Recordado:","I can't help with that one, but I'm happy to help with your money, habits or goals.":"Con eso no puedo ayudarte, pero encantado de ayudarte con tu dinero, hábitos o metas.","Reply cut short.":"Respuesta cortada.","(No reply. Please try again.)":"(Sin respuesta. Inténtalo de nuevo.)","Weekly review":"Repaso semanal","Give me my weekly review: how my money, habits and goals went, one win, one thing to fix, and my top 3 priorities for next week.":"Hazme el repaso semanal: cómo fueron mi dinero, hábitos y metas, un logro, una cosa a mejorar y mis 3 prioridades para la próxima semana.","Cut my costs":"Reducir gastos","Look at my spending and subscriptions. Where can I realistically save money this month? Be specific with amounts.":"Revisa mis gastos y suscripciones. ¿Dónde puedo ahorrar de forma realista este mes? Sé concreto con las cantidades.","Can I afford…":"¿Me lo puedo permitir…?","Can I afford ":"¿Me puedo permitir ","Plan my week":"Planear mi semana","Help me plan this week around my focus items, habits and goals. Keep it realistic.":"Ayúdame a planear esta semana según mis prioridades, hábitos y metas. Que sea realista.","Cancellation email":"Email de baja","Draft a short, polite email to cancel one of my flagged subscriptions, or the one I seem to use least. Make it ready to copy.":"Redacta un email breve y educado para cancelar una de mis suscripciones marcadas, o la que menos parezco usar. Listo para copiar.","Unstick a goal":"Desatascar una meta","Which of my goals is most stuck, and what is the smallest next step I can take today?":"¿Cuál de mis metas está más atascada y cuál es el paso más pequeño que puedo dar hoy?","Insights":"Hallazgos","AI Coach":"AI Coach","About me":"Sobre mí","Calmdeck Brain spots patterns on your device. The optional AI coach helps you act on them.":"Calmdeck Brain detecta patrones en tu dispositivo. El AI Coach opcional te ayuda a actuar.","What Calmdeck noticed":"Lo que Calmdeck ha notado","Worked out on this device · no AI, no internet":"Calculado en este dispositivo · sin IA, sin internet","Add some expenses, subscriptions and habits, and Calmdeck will start spotting patterns.":"Añade algunos gastos, suscripciones y hábitos, y Calmdeck empezará a detectar patrones.","Want to talk it through? The {b}AI Coach{/b} can turn these into a plan.":"¿Quieres hablarlo? El {b}AI Coach{/b} puede convertir esto en un plan.","Open AI Coach":"Abrir AI Coach","Helps the coach fit its advice to you":"Ayuda al coach a adaptar sus consejos","e.g. 29, freelance designer, living with my partner in Lyon. Income changes month to month.":"p. ej. 29 años, diseñadora freelance, vivo con mi pareja en Valencia. Mis ingresos varían cada mes.","What matters most to me right now":"Lo que más me importa ahora","e.g. Build savings, get fit before summer, stop impulse shopping.":"p. ej. Ahorrar, ponerme en forma antes del verano, dejar las compras impulsivas.","Coaching style":"Estilo del coach","Gentle and encouraging":"Amable y motivador","Balanced":"Equilibrado","Direct, no sugar-coating":"Directo, sin rodeos","Things Calmdeck remembers":"Lo que Calmdeck recuerda","Learned in a chat":"Aprendido en un chat","Added by you":"Añadido por ti","Forget":"Olvidar","Nothing yet. Add facts yourself, or the AI coach will save them as you chat.":"Nada aún. Añade datos tú mismo o el AI Coach los guardará mientras chateáis.","Add something Calmdeck should remember":"Añade algo que Calmdeck deba recordar","Patterns learned from your data":"Patrones aprendidos de tus datos","Updates automatically":"Se actualiza solo","Patterns appear as you use Calmdeck.":"Los patrones aparecen a medida que usas Calmdeck.","Stored only on this device. It's sent to the AI provider only while you chat with the AI coach.":"Se guarda solo en este dispositivo. Solo se envía al proveedor de IA mientras chateas con el AI Coach.","Example chat":"Chat de ejemplo","You're chatting with an AI. It can make mistakes and isn't legal, tax or investment advice.":"Estás chateando con una IA. Puede equivocarse y no es asesoramiento legal, fiscal ni de inversión.","What's shared":"Qué se comparte","Clear":"Borrar","Ask anything about your money, habits or goals. The coach sees your Calmdeck data, so its answers use your real numbers.":"Pregunta lo que quieras sobre tu dinero, hábitos o metas. El coach ve tus datos de Calmdeck, así que responde con tus cifras reales.","In the full version, connect your AI key to chat":"En la versión completa, conecta tu clave de IA para chatear","Message your coach…":"Escribe a tu coach…","Send":"Enviar","Connect the AI Coach":"Conecta el AI Coach","The coach uses {b}Claude{/b} by Anthropic with your own API key. You pay Anthropic directly for what you use: usually cents to a few euros a month. Calmdeck never sees your key or your messages. Your device talks straight to Anthropic.":"El coach usa {b}Claude{/b} de Anthropic con tu propia clave de API. Pagas directamente a Anthropic por lo que uses: normalmente de unos céntimos a pocos euros al mes. Calmdeck nunca ve tu clave ni tus mensajes. Tu dispositivo habla directamente con Anthropic.","Go to {b}console.anthropic.com{/b} and create an account.":"Ve a {b}console.anthropic.com{/b} y crea una cuenta.","Add a little credit (for example $5) under {b}Billing{/b}. You can set a monthly spend limit too.":"Añade algo de saldo (por ejemplo 5 $) en {b}Billing{/b}. También puedes fijar un límite de gasto mensual.","Create a key under {b}API keys{/b} and paste it below.":"Crea una clave en {b}API keys{/b} y pégala abajo.","Anthropic works in most countries, but not everywhere (for example, not in Russia). If it isn't available where you live, everything else in Calmdeck still works.":"Anthropic funciona en la mayoría de países, pero no en todos (por ejemplo, no en Rusia). Si no está disponible donde vives, todo lo demás de Calmdeck sigue funcionando.","API key":"Clave de API","Model":"Modelo","I understand that when I chat, a summary of my Calmdeck data (budgets, recent transactions, subscriptions, habits, goals and “About me”) is sent to Anthropic to write the reply.":"Entiendo que, cuando chateo, se envía a Anthropic un resumen de mis datos de Calmdeck (presupuestos, movimientos recientes, suscripciones, hábitos, metas y «Sobre mí») para escribir la respuesta.","Connect & test":"Conectar y probar","Remove key":"Quitar clave","Your key is stored only on this device and is never included in backups. Calmdeck Brain insights work without any of this.":"Tu clave se guarda solo en este dispositivo y nunca se incluye en las copias. Los hallazgos de Calmdeck Brain funcionan sin nada de esto.","What's shared with the AI":"Qué se comparte con la IA","Each time you send a message, this summary and your recent chat go to Anthropic to write the reply. Nothing is sent at any other time.":"Cada vez que envías un mensaje, este resumen y tu chat reciente se envían a Anthropic para escribir la respuesta. No se envía nada en ningún otro momento.","Clear the conversation? Things Calmdeck remembers are kept.":"¿Borrar la conversación? Lo que Calmdeck recuerda se mantiene.","Remove your API key from this device?":"¿Quitar tu clave de API de este dispositivo?","Key removed":"Clave eliminada","Paste your API key first":"Primero pega tu clave de API","Please tick the data-sharing box first":"Marca primero la casilla de datos compartidos","Testing…":"Probando…","AI Coach connected":"AI Coach conectado","Description":"Descripción","Salary, freelance…":"Nómina, freelance…","Groceries, coffee…":"Supermercado, café…","Amount":"Importe","Date":"Fecha","Category":"Categoría","Type":"Tipo","Edit transaction":"Editar movimiento","Add income":"Añadir ingreso","Income added":"Ingreso añadido","Expense added":"Gasto añadido","Edit subscription":"Editar suscripción","e.g. Netflix":"p. ej. Netflix","Price":"Precio","Next renewal date":"Fecha de próxima renovación","Note (optional)":"Nota (opcional)","Shared with family, annual plan…":"Compartida con la familia, plan anual…","Transaction deleted":"Movimiento eliminado","Monthly budgets":"Presupuestos mensuales","No limit":"Sin límite","Budgets saved":"Presupuestos guardados","Remove this subscription?":"¿Quitar esta suscripción?","Habit":"Hábito","e.g. Walk 20 minutes":"p. ej. Caminar 20 minutos","Delete this habit and its history?":"¿Eliminar este hábito y su historial?","Goal":"Meta","e.g. Build a 3-month emergency fund":"p. ej. Crear un fondo de emergencia de 3 meses","Why it matters (optional)":"Por qué importa (opcional)","Peace of mind":"Tranquilidad","Target date (optional)":"Fecha objetivo (opcional)","Delete this goal?":"¿Eliminar esta meta?","Replace your current data with sample data?":"¿Sustituir tus datos actuales por datos de ejemplo?","Sample data loaded":"Datos de ejemplo cargados","All set. Start by adding a subscription or two.":"Todo listo. Empieza añadiendo una o dos suscripciones.","Erase ALL Calmdeck data on this device, including what Calmdeck remembers and your AI key? Export a backup first if unsure.":"¿Borrar TODOS los datos de Calmdeck de este dispositivo, incluido lo que Calmdeck recuerda y tu clave de IA? Si dudas, exporta antes una copia.","Everything erased":"Todo borrado","Backup downloaded":"Copia descargada","Backup restored":"Copia restaurada","That file is not a valid Calmdeck backup.":"Ese archivo no es una copia válida de Calmdeck.","Sam":"Sam","Salary":"Nómina","Rent":"Alquiler","Groceries":"Supermercado","Monthly transit pass":"Abono de transporte","Coffee & pastry":"Café y bollo","Electricity":"Luz","Dinner with friends":"Cena con amigos","Pharmacy":"Farmacia","Running shoes":"Zapatillas de running","Internet":"Internet","Lunch out":"Comida fuera","Concert tickets":"Entradas de concierto","Fuel":"Gasolina","Freelance invoice":"Factura freelance","Phone plan":"Tarifa móvil","Takeout":"Comida a domicilio","Book":"Libro","Transit":"Transporte","Utilities":"Suministros","Weekend trip":"Escapada de fin de semana","Clothes":"Ropa","Netflix":"Netflix","Spotify":"Spotify","iCloud+ 200 GB":"iCloud+ 200 GB","Gym membership":"Gimnasio","Went 3× last month":"Fui 3 veces el mes pasado","Adobe Creative Cloud":"Adobe Creative Cloud","Only use it for occasional photo edits":"Solo la uso para editar alguna foto","Amazon Prime":"Amazon Prime","News subscription":"Suscripción a noticias","Language app":"App de idiomas","Password manager":"Gestor de contraseñas","Walk 20 minutes":"Caminar 20 minutos","Read 10 pages":"Leer 10 páginas","No phone after 10pm":"Sin móvil después de las 22:00","Drink 2L of water":"Beber 2 L de agua","Build a 3-month emergency fund":"Crear un fondo de emergencia de 3 meses","Sleep better and say no to bad jobs":"Dormir tranquilo y poder decir no a trabajos malos","Open a separate high-yield savings account":"Abrir una cuenta de ahorro remunerada aparte","Automate {a} on payday":"Automatizar {a} el día de cobro","Cancel 2 unused subscriptions":"Cancelar 2 suscripciones que no uso","Hit {b} milestone":"Llegar a {b}","Hit {c} (3 months of costs)":"Llegar a {c} (3 meses de gastos)","Run a 10K":"Correr 10 km","Feel strong again":"Volver a sentirme fuerte","Buy proper running shoes":"Comprar buenas zapatillas","Run 3× per week for 4 weeks":"Correr 3 veces por semana durante 4 semanas","Complete a 5K without stopping":"Correr 5 km sin parar","Sign up for a local race":"Apuntarme a una carrera local","Launch a side project":"Lanzar un proyecto personal","Pick one idea and write a one-page plan":"Elegir una idea y escribir un plan de una página","Build a first version":"Hacer una primera versión","Show it to 10 people":"Enseñárselo a 10 personas","32, product designer, renting a flat with my partner. Paid monthly, plus occasional freelance work.":"32 años, diseñador de producto, de alquiler con mi pareja. Cobro mensual y algún trabajo freelance.","Build an emergency fund, run a 10K, spend less on takeout.":"Crear un fondo de emergencia, correr 10 km, gastar menos en comida a domicilio.","Wants 3 months of expenses saved by spring":"Quiere tener ahorrados 3 meses de gastos para la primavera","Cooks at home on weeknights but struggles on Fridays":"Cocina en casa entre semana, pero los viernes le cuesta","Can I afford a {trip} weekend trip next month?":"¿Me puedo permitir una escapada de {trip} el mes que viene?","**Yes, with a little planning.** You're close to your budget this month and you saved about 40% of your income last month, so {trip} is realistic.\n\nTo make it painless:\n- Put {wk} aside each week for the next 4 weeks.\n- Fridays are your priciest day. Two home-cooked Fridays cover about a quarter of it.\n- Cancelling Adobe, which you've flagged, frees {adobe} a month on its own.\n\nWant me to add “Weekend trip fund” as a goal with these steps?":"**Sí, con un poco de planificación.** Este mes vas cerca de tu presupuesto y el mes pasado ahorraste alrededor del 40% de tus ingresos, así que {trip} es realista.\n\nPara que no duela:\n- Aparta {wk} cada semana durante las próximas 4 semanas.\n- Los viernes son tu día más caro. Dos viernes cocinando en casa cubren cerca de una cuarta parte.\n- Cancelar Adobe, que ya marcaste, libera {adobe} al mes por sí solo.\n\n¿Quieres que añada «Fondo para la escapada» como meta con estos pasos?","Planning a weekend trip next month, budget about {trip}":"Planea una escapada el mes que viene, con un presupuesto de unos {trip}","Finish the quarterly report":"Terminar el informe trimestral","Call Mom on Sunday":"Llamar a mamá el domingo","Cancel the Adobe subscription":"Cancelar la suscripción de Adobe"},"ru":{"Today":"Сегодня","Money":"Деньги","Subscriptions":"Подписки","Subs":"Подписки","Habits":"Привычки","Goals":"Цели","Coach":"Коуч","Settings":"Настройки","Yesterday":"Вчера","Add":"Добавить","Edit":"Изменить","Delete":"Удалить","Remove":"Убрать","Toggle":"Отметить","Cancel":"Отмена","Save":"Сохранить","Close":"Закрыть","Saved":"Сохранено","Optional":"Необязательно","Private & offline":"Приватно и офлайн","Your data stays on this device.":"Ваши данные остаются на этом устройстве.","{b}Live demo{/b} with sample data. Click around freely; changes reset when you reload.":"{b}Живое демо{/b} с примерными данными. Нажимайте что угодно — после перезагрузки всё сбросится.","Get Calmdeck":"Купить Calmdeck","Housing":"Жильё","Food":"Еда","Transport":"Транспорт","Shopping":"Покупки","Health":"Здоровье","Fun":"Досуг","Bills":"Счета","Other":"Другое","Income":"Доход","Expense":"Расход","Weekly":"Еженедельно","Monthly":"Ежемесячно","Quarterly":"Ежеквартально","Yearly":"Ежегодно","Good morning":"Доброе утро","Good afternoon":"Добрый день","Good evening":"Добрый вечер","Here's where things stand.":"Вот как обстоят дела.","Add expense":"Добавить расход","Welcome to Calmdeck":"Добро пожаловать в Calmdeck","Your money, subscriptions, habits and goals in one calm place. Everything is stored only on this device, with no account and no cloud. Start with sample data to look around, or start fresh.":"Деньги, подписки, привычки и цели — в одном спокойном месте. Всё хранится только на этом устройстве: без аккаунта и без облака. Начните с примерных данных, чтобы осмотреться, или начните с нуля.","Explore with sample data":"Посмотреть на примере","Start fresh":"Начать с нуля","Spent this month":"Потрачено за месяц","of {x} budget":"из бюджета {x}","Set a budget":"Задать бюджет","Safe to spend / day":"Можно тратить в день","{n} day left in {month}|{n} days left in {month}":"До конца месяца {n} день|До конца месяца {n} дня|До конца месяца {n} дней","Subscriptions / year":"Подписки в год","{n} active|{n} active":"{n} активная|{n} активные|{n} активных","{x}/mo":"{x}/мес.","Habits today":"Привычки сегодня","All done. Nice.":"Всё выполнено. Отлично!","Keep the chain going":"Не прерывайте серию","Add your first habit":"Добавьте первую привычку","This week's focus":"Фокус недели","Top priorities, max 5":"Главное, не больше 5","What would make this week a win?":"Что сделает эту неделю удачной?","Add a priority and press Enter":"Добавьте приоритет и нажмите Enter","Today's habits":"Привычки на сегодня","All habits":"Все привычки","No habits yet.":"Привычек пока нет.","Add one":"Добавить","Upcoming renewals":"Ближайшие продления","Next 14 days":"Ближайшие 14 дней","Renews today":"Продление сегодня","Tomorrow":"Завтра","In {n} day|In {n} days":"Через {n} день|Через {n} дня|Через {n} дней","Nothing renewing in the next two weeks.":"В ближайшие две недели продлений нет.","Goals in progress":"Цели в работе","All goals":"Все цели","No active goals.":"Активных целей нет.","Set one":"Поставить цель","Install Calmdeck on your {device}.":"Установите Calmdeck на {device}.","Tap {icon} Share, then {b}Add to Home Screen{/b}. Do it before adding data, because the installed app keeps its own separate storage.":"Нажмите {icon} «Поделиться», затем {b}«На экран „Домой“»{/b}. Сделайте это до ввода данных: у установленного приложения отдельное хранилище.","Dismiss":"Скрыть","Install Calmdeck as an app.":"Установите Calmdeck как приложение.","One tap. It works offline, with its own icon and window.":"Одно касание. Работает офлайн, со своим значком и окном.","Not now":"Не сейчас","Install":"Установить","Calmdeck installed":"Calmdeck установлен","Track what comes in, what goes out, and where it goes.":"Следите, что приходит, что уходит и куда.","Previous month":"Предыдущий месяц","Next month":"Следующий месяц","Spent":"Потрачено","Net":"Итог","{p}% savings rate":"Сбережения: {p}%","Budgets":"Бюджеты","Edit budgets":"Изменить бюджеты","no budget":"без бюджета","Set monthly limits per category to see how you're pacing.":"Задайте месячные лимиты по категориям, чтобы видеть темп трат.","Transactions":"Операции","This month: {n}":"В этом месяце: {n}","Export CSV":"Экспорт CSV","No transactions this month yet.":"В этом месяце операций пока нет.","See every recurring charge, and what it really costs per year.":"Все регулярные списания и их реальная стоимость за год.","Add subscription":"Добавить подписку","Per month":"В месяц","Per year":"В год","Subscriptions: {n}":"Подписок: {n}","Over 5 years":"За 5 лет","if nothing changes":"если ничего не менять","Cancelling your {b}{n} flagged{/b} subscription would save {b}{x}/year{/b}.|Cancelling your {b}{n} flagged{/b} subscriptions would save {b}{x}/year{/b}.":"Отмена {b}{n} отмеченной подписки{/b} сэкономит {b}{x} в год{/b}.|Отмена {b}{n} отмеченных подписок{/b} сэкономит {b}{x} в год{/b}.|Отмена {b}{n} отмеченных подписок{/b} сэкономит {b}{x} в год{/b}.","Flag ones you rarely use with {icon}":"Отмечайте редко используемые значком {icon}","Name":"Название","Billing":"Оплата","Next renewal":"Следующее продление","Cost":"Стоимость","Review":"Проверить","today":"сегодня","{n}d":"{n} дн.","Flag for review":"Отметить для проверки","Add streaming, software, gym and cloud storage. It's easy to forget one or two.":"Добавьте стриминг, программы, спортзал и облако. Про одну-две легко забыть.","Small things, done daily. Tap a square to mark a day.":"Маленькие дела каждый день. Нажмите на квадрат, чтобы отметить день.","New habit":"Новая привычка","{n} day streak|{n} day streak":"Серия: {n} день|Серия: {n} дня|Серия: {n} дней","{p}% last 30 days":"{p}% за 30 дней","Try “Walk 20 minutes”, “Read 10 pages” or “No phone after 10pm”.":"Например: «Гулять 20 минут», «Читать 10 страниц» или «Без телефона после 22:00».","Break big things into steps you can actually take.":"Разбивайте большое на шаги, которые реально сделать.","New goal":"Новая цель","Done":"Готово","{n}d overdue":"просрочено на {n} дн.","{n}d left":"осталось {n} дн.","Steps: {a} of {b}":"Шаги: {a} из {b}","Add a step…":"Добавьте шаг…","No goals yet. What do you want to be true 90 days from now?":"Целей пока нет. Чего вы хотите добиться за 90 дней?","Calmdeck stores everything in this browser on this device. Back up regularly.":"Calmdeck хранит всё в этом браузере на этом устройстве. Регулярно делайте резервные копии.","Preferences":"Параметры","Language":"Язык","Auto (device language)":"Авто (язык устройства)","Your first name":"Ваше имя","Currency symbol":"Символ валюты","Theme":"Тема","Auto":"Авто","Light":"Светлая","Dark":"Тёмная","Your data":"Ваши данные","Your data stays on this device. Calmdeck never sends it anywhere, unless you connect the optional AI Coach, which shares a summary only while you chat. To move to another device, export a backup and import it there.":"Ваши данные остаются на этом устройстве. Calmdeck никуда их не отправляет — кроме случая, когда вы подключаете необязательного ИИ-коуча: он получает сводку только во время чата. Чтобы перейти на другое устройство, экспортируйте копию и импортируйте её там.","Export backup":"Экспорт копии","Import backup":"Импорт копии","Transactions CSV":"Операции в CSV","Load sample data":"Загрузить пример","Erase everything":"Стереть всё","Running as an installed app.":"Работает как установленное приложение.","Keyboard: {n} new expense · {r} switch sections":"Клавиши: {n} — новый расход · {r} — разделы","Monthly budget used up":"Бюджет месяца исчерпан","You've spent {x} of {y} with {n} day left.|You've spent {x} of {y} with {n} days left.":"Вы потратили {x} из {y}, а до конца месяца ещё {n} день.|Вы потратили {x} из {y}, а до конца месяца ещё {n} дня.|Вы потратили {x} из {y}, а до конца месяца ещё {n} дней.","Heading about {x} over budget":"Перерасход составит около {x}","At this pace you'll spend around {x} this month. Keeping to {y} a day brings you back on track.":"В таком темпе вы потратите около {x} за месяц. Если тратить не больше {y} в день, вы вернётесь в рамки.","Right at your limit":"На грани лимита","At this pace you'll spend around {x}, just over your {y} budget. A few small cuts keep you inside it.":"В таком темпе вы потратите около {x} — чуть больше бюджета {y}. Небольшая экономия поможет уложиться.","On track this month":"В этом месяце всё по плану","At this pace you'll spend around {x}, inside your {y} budget.":"В таком темпе вы потратите около {x} — в пределах бюджета {y}.","{c} is over budget":"{c}: бюджет превышен","{x} spent of {y}, {z} over.":"Потрачено {x} из {y}, превышение {z}.","{c} budget almost used":"{c}: бюджет почти исчерпан","{p}% used with {n} day still to go.|{p}% used with {n} days still to go.":"Использовано {p}%, а впереди ещё {n} день.|Использовано {p}%, а впереди ещё {n} дня.|Использовано {p}%, а впереди ещё {n} дней.","{c} spending up {p}%":"{c}: траты выросли на {p}%","{x} so far this month vs {y} by the same day last month.":"{x} с начала месяца против {y} к этому же дню прошлого месяца.","{c} spending down {p}%":"{c}: траты снизились на {p}%","{x} so far vs {y} by this point last month.":"{x} сейчас против {y} к этому моменту прошлого месяца.","You spend most {day}":"Больше всего вы тратите {day}","About {p}% more than your average day over the last two months, not counting rent and bills.":"Примерно на {p}% больше среднего дня за последние два месяца, без учёта аренды и счетов.","Last month you saved {p}% of your income":"В прошлом месяце вы сберегли {p}% дохода","That's a strong savings rate. Keep it up.":"Отличный уровень сбережений. Так держать!","A common target is 20%. Small cuts add up fast.":"Обычная цель — 20%. Небольшая экономия быстро накапливается.","You spent more than you earned last month.":"В прошлом месяце вы потратили больше, чем заработали.","Subscriptions take {p}% of your income":"Подписки съедают {p}% дохода","That's {x} a month, or {y} a year.":"Это {x} в месяц, или {y} в год.","Save {x} a year":"Сэкономьте {x} в год","by cancelling the subscriptions you flagged: {list}.":"если отмените отмеченные подписки: {list}.","{s} went up {p}%":"{s} подорожал на {p}%","From {x} to {y}. That's {z} more per year.":"С {x} до {y}. Это на {z} больше в год.","{s} renews today":"{s}: продление сегодня","{s} renews tomorrow":"{s}: продление завтра","{s} renews in {n} day|{s} renews in {n} days":"{s}: продление через {n} день|{s}: продление через {n} дня|{s}: продление через {n} дней","{x} will be charged. Still worth it?":"Спишется {x}. Ещё нужна?","Big renewal coming: {s}":"Скоро крупное продление: {s}","{x} on {d}. Cancel before then if you don't need it.":"{x} — {d}. Отмените заранее, если она не нужна.","Keep your {n}-day streak alive|Keep your {n}-day streak alive":"Не прерывайте серию: {n} день|Не прерывайте серию: {n} дня|Не прерывайте серию: {n} дней","“{h}” isn't checked off yet today.":"«{h}» сегодня ещё не отмечено.","“{h}” slips on weekends":"«{h}» проседает по выходным","Done on {a}% of weekdays but {b}% of weekends over the last 4 weeks. Try a weekend-specific time or cue.":"За последние 4 недели: {a}% будних дней, но только {b}% выходных. Попробуйте отдельное время или напоминание на выходные.","{n}-day streak: {h}|{n}-day streak: {h}":"{h}: серия {n} день|{h}: серия {n} дня|{h}: серия {n} дней","Consistency like this is what makes a habit stick.":"Именно такая регулярность закрепляет привычку.","Break “{g}” into steps":"Разбейте «{g}» на шаги","Goals with small, concrete steps are far more likely to get done.":"Цели с маленькими конкретными шагами выполняются гораздо чаще.","“{g}” is {n} day overdue|“{g}” is {n} days overdue":"«{g}»: просрочено на {n} день|«{g}»: просрочено на {n} дня|«{g}»: просрочено на {n} дней","{p}% done. Set a new realistic date, or cut the scope.":"Выполнено {p}%. Назначьте новый реальный срок или сократите объём.","“{g}” is due in {n} day|“{g}” is due in {n} days":"«{g}»: срок через {n} день|«{g}»: срок через {n} дня|«{g}»: срок через {n} дней","Only {p}% done. What's the one next step?":"Выполнено лишь {p}%. Какой следующий шаг?","Typically spends about {x} a month (average of the last {n} month).|Typically spends about {x} a month (average of the last {n} months).":"Обычно тратит около {x} в месяц (в среднем за последний {n} месяц).|Обычно тратит около {x} в месяц (в среднем за последние {n} месяца).|Обычно тратит около {x} в месяц (в среднем за последние {n} месяцев).","Typical monthly income: about {x}.":"Обычный месячный доход: около {x}.","Biggest spending areas lately: {list}.":"Больше всего трат в последнее время: {list}.","Spends the most {day}.":"Больше всего тратит {day}.","Subscriptions: {n}, costing {x} a year.":"Подписок: {n}, на {x} в год.","Most consistent habit: “{h}” ({p}% of days).":"Самая стабильная привычка: «{h}» ({p}% дней).","Hardest habit to keep: “{h}” ({p}% of days).":"Труднее всего даётся: «{h}» ({p}% дней).","Goals: {n}, completed: {d}.":"Целей: {n}, выполнено: {d}.","Calmdeck noticed":"Calmdeck заметил","See all":"Все","Fastest and cheapest. Typically under €1 a month":"Самая быстрая и дешёвая. Обычно меньше 1 € в месяц","Smarter and more thoughtful. Typically €2–12 a month":"Умнее и вдумчивее. Обычно 2–12 € в месяц","Most capable, highest cost":"Самая мощная и самая дорогая","Your Anthropic account is out of credit. Add credit at console.anthropic.com, under Billing.":"На счёте Anthropic закончились средства. Пополните его на console.anthropic.com в разделе Billing.","Anthropic rejected that API key. Check it in Coach → AI Coach → Settings.":"Anthropic отклонил этот API-ключ. Проверьте его: Коуч → ИИ-коуч → Настройки.","This API key isn't allowed to use that model.":"Этому API-ключу недоступна эта модель.","That model isn't available on your account. Pick another model in Settings.":"Эта модель недоступна в вашем аккаунте. Выберите другую в настройках.","Too many requests, or your spend limit was reached. Wait a minute, or check your limits at console.anthropic.com.":"Слишком много запросов или достигнут лимит расходов. Подождите минуту или проверьте лимиты на console.anthropic.com.","The AI service is busy right now. Try again in a moment.":"Сервис ИИ сейчас занят. Попробуйте чуть позже.","The AI service returned an error.":"Сервис ИИ вернул ошибку.","Couldn't reach the AI service. Check your internet connection.":"Не удалось связаться с сервисом ИИ. Проверьте подключение к интернету.","Thinking":"Думаю","Remembered:":"Запомнил:","I can't help with that one, but I'm happy to help with your money, habits or goals.":"С этим я помочь не могу, но с радостью помогу с деньгами, привычками или целями.","Reply cut short.":"Ответ обрезан.","(No reply. Please try again.)":"(Нет ответа. Попробуйте ещё раз.)","Weekly review":"Итоги недели","Give me my weekly review: how my money, habits and goals went, one win, one thing to fix, and my top 3 priorities for next week.":"Подведи итоги моей недели: как прошли деньги, привычки и цели, одна победа, одна вещь, которую стоит исправить, и мои 3 главных приоритета на следующую неделю.","Cut my costs":"Сократить расходы","Look at my spending and subscriptions. Where can I realistically save money this month? Be specific with amounts.":"Посмотри на мои траты и подписки. Где я реально могу сэкономить в этом месяце? Назови конкретные суммы.","Can I afford…":"Могу ли я позволить…","Can I afford ":"Могу ли я позволить себе ","Plan my week":"Спланировать неделю","Help me plan this week around my focus items, habits and goals. Keep it realistic.":"Помоги спланировать эту неделю с учётом моих приоритетов, привычек и целей. Реалистично.","Cancellation email":"Письмо об отмене","Draft a short, polite email to cancel one of my flagged subscriptions, or the one I seem to use least. Make it ready to copy.":"Составь короткое вежливое письмо об отмене одной из отмеченных подписок или той, которой я, похоже, пользуюсь меньше всего. Чтобы можно было сразу скопировать.","Unstick a goal":"Сдвинуть цель","Which of my goals is most stuck, and what is the smallest next step I can take today?":"Какая из моих целей застряла сильнее всего и какой самый маленький шаг я могу сделать сегодня?","Insights":"Наблюдения","AI Coach":"ИИ-коуч","About me":"Обо мне","Calmdeck Brain spots patterns on your device. The optional AI coach helps you act on them.":"Calmdeck Brain находит закономерности прямо на устройстве. Необязательный ИИ-коуч помогает действовать.","What Calmdeck noticed":"Что заметил Calmdeck","Worked out on this device · no AI, no internet":"Рассчитано на устройстве · без ИИ и интернета","Add some expenses, subscriptions and habits, and Calmdeck will start spotting patterns.":"Добавьте расходы, подписки и привычки — и Calmdeck начнёт находить закономерности.","Want to talk it through? The {b}AI Coach{/b} can turn these into a plan.":"Хотите обсудить? {b}ИИ-коуч{/b} превратит это в план.","Open AI Coach":"Открыть ИИ-коуча","Helps the coach fit its advice to you":"Помогает коучу давать советы под вас","e.g. 29, freelance designer, living with my partner in Lyon. Income changes month to month.":"Например: 29 лет, дизайнер-фрилансер, живу с партнёром в Казани. Доход меняется от месяца к месяцу.","What matters most to me right now":"Что для меня важнее всего сейчас","e.g. Build savings, get fit before summer, stop impulse shopping.":"Например: накопить подушку, прийти в форму к лету, перестать покупать импульсивно.","Coaching style":"Стиль коучинга","Gentle and encouraging":"Мягкий и поддерживающий","Balanced":"Сбалансированный","Direct, no sugar-coating":"Прямой, без прикрас","Things Calmdeck remembers":"Что помнит Calmdeck","Learned in a chat":"Узнал в чате","Added by you":"Добавлено вами","Forget":"Забыть","Nothing yet. Add facts yourself, or the AI coach will save them as you chat.":"Пока ничего. Добавьте факты сами — или ИИ-коуч сохранит их во время разговора.","Add something Calmdeck should remember":"Добавьте то, что Calmdeck должен помнить","Patterns learned from your data":"Закономерности из ваших данных","Updates automatically":"Обновляется автоматически","Patterns appear as you use Calmdeck.":"Закономерности появятся по мере использования Calmdeck.","Stored only on this device. It's sent to the AI provider only while you chat with the AI coach.":"Хранится только на этом устройстве. Передаётся ИИ-сервису только во время чата с ИИ-коучем.","Example chat":"Пример чата","You're chatting with an AI. It can make mistakes and isn't legal, tax or investment advice.":"Вы общаетесь с ИИ. Он может ошибаться, и это не юридическая, налоговая или инвестиционная консультация.","What's shared":"Что передаётся","Clear":"Очистить","Ask anything about your money, habits or goals. The coach sees your Calmdeck data, so its answers use your real numbers.":"Спрашивайте что угодно о деньгах, привычках и целях. Коуч видит ваши данные Calmdeck, поэтому отвечает с реальными цифрами.","In the full version, connect your AI key to chat":"В полной версии подключите свой ключ ИИ для чата","Message your coach…":"Напишите коучу…","Send":"Отправить","Connect the AI Coach":"Подключите ИИ-коуча","The coach uses {b}Claude{/b} by Anthropic with your own API key. You pay Anthropic directly for what you use: usually cents to a few euros a month. Calmdeck never sees your key or your messages. Your device talks straight to Anthropic.":"Коуч работает на {b}Claude{/b} от Anthropic с вашим собственным API-ключом. Вы платите Anthropic напрямую за использование: обычно от нескольких центов до пары евро в месяц. Calmdeck не видит ни ключ, ни сообщения — устройство общается с Anthropic напрямую.","Go to {b}console.anthropic.com{/b} and create an account.":"Откройте {b}console.anthropic.com{/b} и создайте аккаунт.","Add a little credit (for example $5) under {b}Billing{/b}. You can set a monthly spend limit too.":"Пополните баланс (например, на 5 $) в разделе {b}Billing{/b}. Можно задать и месячный лимит расходов.","Create a key under {b}API keys{/b} and paste it below.":"Создайте ключ в разделе {b}API keys{/b} и вставьте его ниже.","Anthropic works in most countries, but not everywhere (for example, not in Russia). If it isn't available where you live, everything else in Calmdeck still works.":"Anthropic работает в большинстве стран, но не везде — например, в России он недоступен. Если в вашей стране его нет, всё остальное в Calmdeck работает как обычно.","API key":"API-ключ","Model":"Модель","I understand that when I chat, a summary of my Calmdeck data (budgets, recent transactions, subscriptions, habits, goals and “About me”) is sent to Anthropic to write the reply.":"Я понимаю, что во время чата сводка моих данных Calmdeck (бюджеты, последние операции, подписки, привычки, цели и «Обо мне») отправляется в Anthropic для ответа.","Connect & test":"Подключить и проверить","Remove key":"Удалить ключ","Your key is stored only on this device and is never included in backups. Calmdeck Brain insights work without any of this.":"Ключ хранится только на этом устройстве и никогда не попадает в резервные копии. Наблюдения Calmdeck Brain работают и без этого.","What's shared with the AI":"Что передаётся ИИ","Each time you send a message, this summary and your recent chat go to Anthropic to write the reply. Nothing is sent at any other time.":"При каждом сообщении эта сводка и недавняя переписка отправляются в Anthropic для ответа. В остальное время ничего не отправляется.","Clear the conversation? Things Calmdeck remembers are kept.":"Очистить переписку? То, что помнит Calmdeck, сохранится.","Remove your API key from this device?":"Удалить API-ключ с этого устройства?","Key removed":"Ключ удалён","Paste your API key first":"Сначала вставьте API-ключ","Please tick the data-sharing box first":"Сначала отметьте согласие на передачу данных","Testing…":"Проверяю…","AI Coach connected":"ИИ-коуч подключён","Description":"Описание","Salary, freelance…":"Зарплата, фриланс…","Groceries, coffee…":"Продукты, кофе…","Amount":"Сумма","Date":"Дата","Category":"Категория","Type":"Тип","Edit transaction":"Изменить операцию","Add income":"Добавить доход","Income added":"Доход добавлен","Expense added":"Расход добавлен","Edit subscription":"Изменить подписку","e.g. Netflix":"Например, Netflix","Price":"Цена","Next renewal date":"Дата следующего продления","Note (optional)":"Заметка (необязательно)","Shared with family, annual plan…":"Семейная, годовой тариф…","Transaction deleted":"Операция удалена","Monthly budgets":"Месячные бюджеты","No limit":"Без лимита","Budgets saved":"Бюджеты сохранены","Remove this subscription?":"Удалить эту подписку?","Habit":"Привычка","e.g. Walk 20 minutes":"Например, гулять 20 минут","Delete this habit and its history?":"Удалить привычку вместе с историей?","Goal":"Цель","e.g. Build a 3-month emergency fund":"Например, подушка безопасности на 3 месяца","Why it matters (optional)":"Почему это важно (необязательно)","Peace of mind":"Спокойствие","Target date (optional)":"Срок (необязательно)","Delete this goal?":"Удалить эту цель?","Replace your current data with sample data?":"Заменить текущие данные примером?","Sample data loaded":"Пример загружен","All set. Start by adding a subscription or two.":"Готово. Начните с одной-двух подписок.","Erase ALL Calmdeck data on this device, including what Calmdeck remembers and your AI key? Export a backup first if unsure.":"Стереть ВСЕ данные Calmdeck на этом устройстве, включая то, что он помнит, и ключ ИИ? Если сомневаетесь, сначала сделайте копию.","Everything erased":"Всё стёрто","Backup downloaded":"Копия сохранена","Backup restored":"Копия восстановлена","That file is not a valid Calmdeck backup.":"Этот файл не является копией Calmdeck.","Sam":"Саша","Salary":"Зарплата","Rent":"Аренда","Groceries":"Продукты","Monthly transit pass":"Проездной на месяц","Coffee & pastry":"Кофе с выпечкой","Electricity":"Электричество","Dinner with friends":"Ужин с друзьями","Pharmacy":"Аптека","Running shoes":"Кроссовки для бега","Internet":"Интернет","Lunch out":"Обед в кафе","Concert tickets":"Билеты на концерт","Fuel":"Бензин","Freelance invoice":"Оплата за фриланс","Phone plan":"Мобильная связь","Takeout":"Доставка еды","Book":"Книга","Transit":"Проезд","Utilities":"Коммуналка","Weekend trip":"Поездка на выходные","Clothes":"Одежда","Netflix":"Netflix","Spotify":"Spotify","iCloud+ 200 GB":"iCloud+ 200 ГБ","Gym membership":"Абонемент в спортзал","Went 3× last month":"Ходил(а) 3 раза в прошлом месяце","Adobe Creative Cloud":"Adobe Creative Cloud","Only use it for occasional photo edits":"Пользуюсь только для редкой обработки фото","Amazon Prime":"Яндекс Плюс","News subscription":"Подписка на новости","Language app":"Приложение для языков","Password manager":"Менеджер паролей","Walk 20 minutes":"Гулять 20 минут","Read 10 pages":"Читать 10 страниц","No phone after 10pm":"Без телефона после 22:00","Drink 2L of water":"Пить 2 л воды","Build a 3-month emergency fund":"Подушка безопасности на 3 месяца","Sleep better and say no to bad jobs":"Спать спокойно и отказываться от плохой работы","Open a separate high-yield savings account":"Открыть отдельный накопительный счёт","Automate {a} on payday":"Автоматически откладывать {a} в день зарплаты","Cancel 2 unused subscriptions":"Отменить 2 ненужные подписки","Hit {b} milestone":"Накопить {b}","Hit {c} (3 months of costs)":"Накопить {c} (3 месяца расходов)","Run a 10K":"Пробежать 10 км","Feel strong again":"Снова почувствовать себя сильным","Buy proper running shoes":"Купить нормальные кроссовки","Run 3× per week for 4 weeks":"Бегать 3 раза в неделю 4 недели","Complete a 5K without stopping":"Пробежать 5 км без остановки","Sign up for a local race":"Записаться на местный забег","Launch a side project":"Запустить свой проект","Pick one idea and write a one-page plan":"Выбрать идею и написать план на страницу","Build a first version":"Сделать первую версию","Show it to 10 people":"Показать 10 людям","32, product designer, renting a flat with my partner. Paid monthly, plus occasional freelance work.":"32 года, продуктовый дизайнер, снимаю квартиру с партнёром. Зарплата раз в месяц плюс иногда фриланс.","Build an emergency fund, run a 10K, spend less on takeout.":"Собрать подушку безопасности, пробежать 10 км, меньше тратить на доставку.","Wants 3 months of expenses saved by spring":"Хочет накопить 3 месяца расходов к весне","Cooks at home on weeknights but struggles on Fridays":"Готовит дома по будням, но по пятницам срывается","Can I afford a {trip} weekend trip next month?":"Могу ли я позволить себе поездку на выходные за {trip} в следующем месяце?","**Yes, with a little planning.** You're close to your budget this month and you saved about 40% of your income last month, so {trip} is realistic.\n\nTo make it painless:\n- Put {wk} aside each week for the next 4 weeks.\n- Fridays are your priciest day. Two home-cooked Fridays cover about a quarter of it.\n- Cancelling Adobe, which you've flagged, frees {adobe} a month on its own.\n\nWant me to add “Weekend trip fund” as a goal with these steps?":"**Да, если немного спланировать.** В этом месяце вы близки к бюджету, а в прошлом сберегли около 40% дохода, так что {trip} — реально.\n\nЧтобы было незаметно:\n- Откладывайте по {wk} в неделю ближайшие 4 недели.\n- Пятница — ваш самый затратный день. Две пятницы с домашним ужином покроют около четверти суммы.\n- Отмена Adobe, которую вы уже отметили, сама по себе освободит {adobe} в месяц.\n\nДобавить цель «Фонд на поездку» с этими шагами?","Planning a weekend trip next month, budget about {trip}":"Планирует поездку на выходные в следующем месяце, бюджет около {trip}","Finish the quarterly report":"Закончить квартальный отчёт","Call Mom on Sunday":"Позвонить маме в воскресенье","Cancel the Adobe subscription":"Отменить подписку Adobe"}}/*END*/;
+const LANGS=[['auto','Auto (device language)'],['en','English'],['es','Español'],['ru','Русский']];
+const LANG_EN={en:'English',es:'Spanish',ru:'Russian'};
+let LANG='en',LOC;
+const MISS=new Set();
+const fill=(r,v)=>r.replace(/\{([\w/]+)\}/g,(m,k)=>v[k]!=null?v[k]:m);
+function tr(s,v){
+  let r=s;
+  if(LANG!=='en'){const d=I18N[LANG];if(d&&d[s]!=null)r=d[s];else MISS.add(s)}
+  return v?fill(r,v):r;
+}
+function trn(n,s,v){
+  const forms=tr(s).split('|'),c=new Intl.PluralRules(LANG).select(n);
+  const i=LANG==='ru'?(c==='one'?0:c==='few'?1:2):(c==='one'?0:1);
+  return fill(forms[Math.min(i,forms.length-1)],Object.assign({n},v||{}));
+}
+function setLang(){
+  const pref=(S&&S.settings&&S.settings.lang)||'auto',q=QS.get('lang'),dev=(navigator.language||'en').slice(0,2).toLowerCase();
+  LANG=pref!=='auto'?pref:(q&&(q==='en'||I18N[q]))?q:(I18N[dev]?dev:'en');
+  LOC=LANG==='en'?undefined:LANG;
+  document.documentElement.lang=LANG;
+}
+const WDN={
+  en:['on Sundays','on Mondays','on Tuesdays','on Wednesdays','on Thursdays','on Fridays','on Saturdays'],
+  es:['los domingos','los lunes','los martes','los miércoles','los jueves','los viernes','los sábados'],
+  ru:['по воскресеньям','по понедельникам','по вторникам','по средам','по четвергам','по пятницам','по субботам'],
+};
+const monthLabel=m=>cap(dt(m+'-01').toLocaleDateString(LOC,{month:'long',year:'numeric'}));
+const monthName=m=>dt(m+'-01').toLocaleDateString(LOC,{month:'long'});
+const dayLabel=s=>{const n=diffDays(today(),s);if(n===0)return tr('Today');if(n===-1)return tr('Yesterday');return dt(s).toLocaleDateString(LOC,{weekday:'short',month:'short',day:'numeric'})};
+
+const CATS=['Housing','Food','Transport','Shopping','Health','Fun','Bills','Subscriptions','Other'];
+const CYCLES={weekly:'Weekly',monthly:'Monthly',quarterly:'Quarterly',yearly:'Yearly'};
+const PER_YEAR={weekly:52,monthly:12,quarterly:4,yearly:1};
+const catName=c=>tr(c);
+
+const blank=()=>({v:1,tx:[],budgets:{},subs:[],habits:[],goals:[],focus:{week:'',items:[]},memory:{about:'',priorities:'',style:'balanced',facts:[]},chat:[],settings:{name:'',currency:'$',theme:'auto',lang:'auto'}});
+let S, view='today', month=today().slice(0,7);
+
+function load(){
+  let raw=null;if(!DEMO)try{raw=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  if(raw){S=Object.assign(blank(),raw);S.settings=Object.assign(blank().settings,raw.settings||{});setLang()}
+  else{S=blank();setLang();if(DEMO)S=demo();else S.fresh=true}
+  normalize();save();
+}
+function save(){if(DEMO)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function normalize(){
+  const t=today();
+  S.memory=Object.assign(blank().memory,S.memory||{});if(!Array.isArray(S.memory.facts))S.memory.facts=[];
+  if(!Array.isArray(S.chat))S.chat=[];S.chat=S.chat.filter(m=>!m.pending);
+  S.subs.forEach(s=>{let g=0;while(s.next&&s.next<t&&g++<500)s.next=nextCycle(s.next,s.cycle)});
+  const wk=weekStart(t);
+  if(S.focus.week!==wk){S.focus.items=S.focus.items.filter(i=>!i.done);S.focus.week=wk}
+}
+const nextCycle=(d,c)=>c==='weekly'?addDays(d,7):c==='quarterly'?addMonths(d,3):c==='yearly'?addMonths(d,12):addMonths(d,1);
+// Symbols written after the number in Spanish and Russian (e.g. "1.234 €", "1 234 ₽").
+const AFTER=new Set(['€','₽','₴','₸','kr','zł','CHF']);
+function fmtCur(num){
+  const c=(S.settings.currency||'$').trim();
+  return LANG!=='en'&&AFTER.has(c)?num+' '+c:c+(/[A-Za-z]$/.test(c)?' ':'')+num;
+}
+const money=(n,sign)=>{const a=Math.abs(n);const s=a.toLocaleString(LOC,{minimumFractionDigits:a%1?2:0,maximumFractionDigits:2});return (n<0?'−':sign&&n>0?'+':'')+fmtCur(s)};
+const money2=n=>fmtCur(Math.abs(n).toLocaleString(LOC,{minimumFractionDigits:2,maximumFractionDigits:2}));
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ---------- derived numbers ---------- */
+const txIn=m=>S.tx.filter(x=>x.date.startsWith(m));
+const spent=(m,cat)=>txIn(m).filter(x=>x.type==='out'&&(!cat||x.cat===cat)).reduce((a,x)=>a+x.amt,0);
+const income=m=>txIn(m).filter(x=>x.type==='in').reduce((a,x)=>a+x.amt,0);
+const totalBudget=()=>Object.values(S.budgets).reduce((a,b)=>a+(+b||0),0);
+const subYear=s=>s.amt*PER_YEAR[s.cycle||'monthly'];
+const subsYearly=()=>S.subs.reduce((a,s)=>a+subYear(s),0);
+function streak(h){let d=today(),n=0;if(!h.log[d])d=addDays(d,-1);while(h.log[d]){n++;d=addDays(d,-1)}return n}
+function rate(h,days=30){let c=0;for(let i=0;i<days;i++)if(h.log[addDays(today(),-i)])c++;return Math.round(c/days*100)}
+const prog=g=>g.steps.length?Math.round(g.steps.filter(s=>s.done).length/g.steps.length*100):0;
+
+/* ---------- icons ---------- */
+const I={
+ today:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+ money:'<rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9v.01M18 15v.01"/>',
+ subs:'<path d="M17 2.5 21 6.5l-4 4"/><path d="M3 11.5v-1a4 4 0 0 1 4-4h14M7 21.5l-4-4 4-4"/><path d="M21 12.5v1a4 4 0 0 1-4 4H3"/>',
+ habits:'<path d="M20 6 9 17l-5-5"/>',
+ goals:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+ check:'<path d="M5 12.5 10 17 19 7"/>',
+ left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',
+ flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+ coach:'<path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+};
+const ic=(n,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const LOGO='<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16" stroke="var(--accent-ink)" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>';
+const VIEWS=[['today','Today'],['money','Money'],['subs','Subscriptions'],['habits','Habits'],['goals','Goals'],['coach','Coach'],['settings','Settings']];
+const lock=sz=>ic('lock').replace('<svg',`<svg width="${sz}" height="${sz}" style="vertical-align:-2px"`);
+
+/* ---------- views ---------- */
+function vToday(){
+  const t=today(),m=t.slice(0,7),sp=spent(m),bud=totalBudget(),dim=daysInMonth(m),left=dim-dt(t).getDate()+1;
+  const safe=bud?Math.max(0,(bud-sp)/left):null;
+  const hDone=S.habits.filter(h=>h.log[t]).length;
+  const up=S.subs.filter(s=>diffDays(t,s.next)<=14).sort((a,b)=>a.next<b.next?-1:1);
+  const goals=S.goals.filter(g=>prog(g)<100).slice(0,3);
+  const hour=new Date().getHours(),greet=hour<12?tr('Good morning'):hour<18?tr('Good afternoon'):tr('Good evening');
+  const name=S.settings.name?', '+esc(S.settings.name):'';
+  return `
+  <div class="head"><div><h1>${greet}${name}</h1><p>${cap(dt(t).toLocaleDateString(LOC,{weekday:'long',month:'long',day:'numeric'}))} · ${tr("Here's where things stand.")}</p></div>
+  <div class="row"><a class="btn ghost m-only" href="#settings" aria-label="${tr('Settings')}">${ic('settings').replace('<svg','<svg width="18" height="18"')}</a><button class="btn primary" data-a="addTx">${ic('plus')}${tr('Add expense')} <span class="kbd hide-m" style="color:inherit;opacity:.7;border-color:currentColor">N</span></button></div></div>
+  ${installBanner()}
+  ${S.fresh?`<div class="welcome"><h2>${tr('Welcome to Calmdeck')} 👋</h2><p>${tr('Your money, subscriptions, habits and goals in one calm place. Everything is stored only on this device, with no account and no cloud. Start with sample data to look around, or start fresh.')}</p>
+   <div class="row"><button class="btn primary" data-a="loadDemo">${tr('Explore with sample data')}</button><button class="btn" data-a="startFresh">${tr('Start fresh')}</button></div></div>`:''}
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card stat"><div class="k">${tr('Spent this month')}</div><div class="v">${money(sp)}</div><div class="s">${bud?tr('of {x} budget',{x:money(bud)}):`<a href="#" data-a="editBudgets">${tr('Set a budget')} →</a>`}</div></div>
+    <div class="card stat"><div class="k">${tr('Safe to spend / day')}</div><div class="v ${safe===0?'neg':''}">${safe===null?'—':money(Math.floor(safe))}</div><div class="s">${trn(left,'{n} day left in {month}|{n} days left in {month}',{month:monthName(m)})}</div></div>
+    <div class="card stat"><div class="k">${tr('Subscriptions / year')}</div><div class="v">${money(Math.round(subsYearly()))}</div><div class="s">${trn(S.subs.length,'{n} active|{n} active')} · ${tr('{x}/mo',{x:money(Math.round(subsYearly()/12))})}</div></div>
+    <div class="card stat"><div class="k">${tr('Habits today')}</div><div class="v">${hDone}<span style="color:var(--muted);font-weight:500">/${S.habits.length}</span></div><div class="s">${S.habits.length?(hDone===S.habits.length?tr('All done. Nice.'):tr('Keep the chain going')):tr('Add your first habit')}</div></div>
+  </div>
+  ${insightsCard(3)}
+  <div class="grid g2">
+    <div class="card"><h2>${tr("This week's focus")} <small>${tr('Top priorities, max 5')}</small></h2>
+      <div class="list">${S.focus.items.map((f,i)=>`<div class="li ${f.done?'done':''}"><button class="check ${f.done?'on':''}" data-a="togFocus" data-id="${i}" aria-label="${tr('Toggle')}">${ic('check')}</button><div class="grow t">${esc(f.t)}</div><button class="icon-btn" data-a="delFocus" data-id="${i}" aria-label="${tr('Remove')}">${ic('trash')}</button></div>`).join('')||`<div class="empty">${tr('What would make this week a win?')}</div>`}</div>
+      ${S.focus.items.length<5?`<div class="inline-add"><input class="inp" id="focusIn" placeholder="${tr('Add a priority and press Enter')}" maxlength="120"><button class="btn" data-a="addFocus">${tr('Add')}</button></div>`:''}
+    </div>
+    <div class="card"><h2>${tr("Today's habits")} <a class="btn sm ghost" href="#habits">${tr('All habits')}</a></h2>
+      <div class="list">${S.habits.map(h=>`<div class="li ${h.log[t]?'done':''}"><button class="check ${h.log[t]?'on':''}" data-a="togHabit" data-id="${h.id}" data-d="${t}" aria-label="${tr('Toggle')}">${ic('check')}</button><div class="grow t">${esc(h.name)}</div><span class="pill ${streak(h)>=7?'good':''}">🔥 ${streak(h)}</span></div>`).join('')||`<div class="empty">${tr('No habits yet.')} <a href="#" data-a="addHabit">${tr('Add one')}</a></div>`}</div>
+    </div>
+    <div class="card"><h2>${tr('Upcoming renewals')} <small>${tr('Next 14 days')}</small></h2>
+      <div class="list">${up.map(s=>{const n=diffDays(t,s.next);return`<div class="li"><div class="grow"><div class="t">${esc(s.name)}</div><div class="m">${n===0?tr('Renews today'):n===1?tr('Tomorrow'):trn(n,'In {n} day|In {n} days')} · ${dayLabel(s.next)}</div></div><span class="amt">${money2(s.amt)}</span></div>`}).join('')||`<div class="empty">${tr('Nothing renewing in the next two weeks.')}</div>`}</div>
+    </div>
+    <div class="card"><h2>${tr('Goals in progress')} <a class="btn sm ghost" href="#goals">${tr('All goals')}</a></h2>
+      <div class="list">${goals.map(g=>`<div class="li" style="flex-direction:column;align-items:stretch;gap:8px"><div class="row" style="justify-content:space-between"><span class="t">${esc(g.title)}</span><span class="m">${prog(g)}%</span></div><div class="bar"><i style="width:${prog(g)}%"></i></div></div>`).join('')||`<div class="empty">${tr('No active goals.')} <a href="#" data-a="addGoal">${tr('Set one')}</a></div>`}</div>
+    </div>
+  </div>`;
+}
+
+function installBanner(){
+  if(DEMO||!WEB||STANDALONE||S.settings.hideInstall)return'';
+  const share='<svg class="share-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 15V3M8 7l4-4 4 4M5 11v9h14v-9"/></svg>';
+  if(IOS)return`<div class="install"><div class="row" style="flex-wrap:nowrap;gap:12px">${LOGO.replace('<svg','<svg class="ico"')}<p><b>${tr('Install Calmdeck on your {device}.',{device:/iPad/.test(navigator.userAgent)?'iPad':'iPhone'})}</b> ${tr('Tap {icon} Share, then {b}Add to Home Screen{/b}. Do it before adding data, because the installed app keeps its own separate storage.',{icon:share,b:'<b>','/b':'</b>'})}</p></div><button class="btn sm ghost" data-a="hideInstall">${tr('Dismiss')}</button></div>`;
+  if(installEvt)return`<div class="install"><div class="row" style="flex-wrap:nowrap;gap:12px">${LOGO.replace('<svg','<svg class="ico"')}<p><b>${tr('Install Calmdeck as an app.')}</b> ${tr('One tap. It works offline, with its own icon and window.')}</p></div><div class="row"><button class="btn sm ghost" data-a="hideInstall">${tr('Not now')}</button><button class="btn sm primary" data-a="install">${tr('Install')}</button></div></div>`;
+  return'';
+}
+
+function vMoney(){
+  const m=month,inc=income(m),sp=spent(m),net=inc-sp,list=txIn(m).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
+  const cats=CATS.filter(c=>S.budgets[c]||spent(m,c));
+  let groups='',last='';
+  list.forEach(x=>{if(x.date!==last){groups+=`<div class="daygrp">${dayLabel(x.date)}</div>`;last=x.date}
+    groups+=`<div class="li"><div class="grow"><div class="t">${esc(x.desc)}</div><div class="m">${esc(x.type==='in'?tr('Income'):catName(x.cat))}</div></div><span class="amt ${x.type==='in'?'pos':''}">${x.type==='in'?'+':''}${money2(x.amt)}</span><button class="icon-btn" data-a="editTx" data-id="${x.id}" aria-label="${tr('Edit')}">${ic('edit')}</button><button class="icon-btn" data-a="delTx" data-id="${x.id}" aria-label="${tr('Delete')}">${ic('trash')}</button></div>`});
+  return `
+  <div class="head"><div><h1>${tr('Money')}</h1><p>${tr('Track what comes in, what goes out, and where it goes.')}</p></div>
+  <div class="row"><div class="seg"><button data-a="month" data-id="-1" aria-label="${tr('Previous month')}">${ic('left').replace('<svg','<svg width="14" height="14"')}</button><button class="on" style="min-width:140px">${monthLabel(m)}</button><button data-a="month" data-id="1" aria-label="${tr('Next month')}">${ic('right').replace('<svg','<svg width="14" height="14"')}</button></div>
+  <button class="btn" data-a="addIncome">${ic('plus')}${tr('Income')}</button><button class="btn primary" data-a="addTx">${ic('plus')}${tr('Expense')}</button></div></div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="k">${tr('Income')}</div><div class="v pos">${money(inc)}</div></div>
+    <div class="card stat"><div class="k">${tr('Spent')}</div><div class="v">${money(sp)}</div></div>
+    <div class="card stat"><div class="k">${tr('Net')}</div><div class="v ${net<0?'neg':'pos'}">${money(net,true)}</div><div class="s">${inc?tr('{p}% savings rate',{p:Math.round(net/inc*100)}):''}</div></div>
+  </div>
+  <div class="grid g2" style="align-items:start">
+    <div class="card"><h2>${tr('Budgets')} <button class="btn sm" data-a="editBudgets">${tr('Edit budgets')}</button></h2>
+      ${cats.length?cats.map(c=>{const s=spent(m,c),b=+S.budgets[c]||0,p=b?s/b*100:100,cls=!b?'':p>100?'bad':p>85?'warn':'good';
+        return`<div style="margin:0 0 14px"><div class="row" style="justify-content:space-between;margin-bottom:6px"><span style="font-weight:550">${catName(c)}</span><span class="m" style="font-size:12.5px;color:var(--muted)"><b class="${p>100&&b?'neg':''}" style="color:${p>100&&b?'':'var(--ink)'}">${money(Math.round(s))}</b>${b?' / '+money(b):' · '+tr('no budget')}</span></div><div class="bar ${cls}"><i style="width:${Math.min(100,p)}%"></i></div></div>`}).join(''):`<div class="empty">${tr("Set monthly limits per category to see how you're pacing.")}</div>`}
+    </div>
+    <div class="card"><h2>${tr('Transactions')} <span class="row"><small>${tr('This month: {n}',{n:list.length})}</small><button class="btn sm" data-a="csv">${tr('Export CSV')}</button></span></h2>
+      <div class="list">${groups||`<div class="empty">${tr('No transactions this month yet.')}</div>`}</div>
+    </div>
+  </div>`;
+}
+
+function vSubs(){
+  const t=today(),yr=subsYearly(),flagged=S.subs.filter(s=>s.flag),save=flagged.reduce((a,s)=>a+subYear(s),0);
+  const list=[...S.subs].sort((a,b)=>subYear(b)-subYear(a));
+  return `
+  <div class="head"><div><h1>${tr('Subscriptions')}</h1><p>${tr('See every recurring charge, and what it really costs per year.')}</p></div>
+  <button class="btn primary" data-a="addSub">${ic('plus')}${tr('Add subscription')}</button></div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card stat"><div class="k">${tr('Per month')}</div><div class="v">${money2(yr/12)}</div></div>
+    <div class="card stat"><div class="k">${tr('Per year')}</div><div class="v">${money(Math.round(yr))}</div><div class="s">${tr('Subscriptions: {n}',{n:S.subs.length})}</div></div>
+    <div class="card stat"><div class="k">${tr('Over 5 years')}</div><div class="v wrn">${money(Math.round(yr*5))}</div><div class="s">${tr('if nothing changes')}</div></div>
+  </div>
+  ${flagged.length?`<div class="callout" style="margin-bottom:16px"><div>${trn(flagged.length,'Cancelling your {b}{n} flagged{/b} subscription would save {b}{x}/year{/b}.|Cancelling your {b}{n} flagged{/b} subscriptions would save {b}{x}/year{/b}.',{x:money(Math.round(save)),b:'<b>','/b':'</b>'})}</div><span class="m" style="color:var(--muted);font-size:12.5px">${tr('Flag ones you rarely use with {icon}',{icon:ic('flag').replace('<svg','<svg width="13" height="13" style="vertical-align:-2px"')})}</span></div>`:''}
+  <div class="card"><div class="scroll"><table class="tbl">
+    <thead><tr><th>${tr('Name')}</th><th class="hide-m">${tr('Billing')}</th><th>${tr('Next renewal')}</th><th class="r">${tr('Cost')}</th><th class="r hide-m">${tr('Per year')}</th><th></th></tr></thead>
+    <tbody>${list.map(s=>{const n=diffDays(t,s.next);return`<tr><td><div style="font-weight:600">${esc(s.name)} ${s.flag?`<span class="pill bad">${tr('Review')}</span>`:''}</div><div class="m" style="font-size:12px;color:var(--muted)">${esc(s.note||'')}</div></td>
+      <td class="hide-m">${tr(CYCLES[s.cycle])}</td><td>${dayLabel(s.next)} <span class="pill ${n<=3?'warn':''}">${n===0?tr('today'):tr('{n}d',{n})}</span></td><td class="r amt">${money2(s.amt)}</td><td class="r amt hide-m">${money(Math.round(subYear(s)))}</td>
+      <td class="r" style="white-space:nowrap"><button class="icon-btn" data-a="flagSub" data-id="${s.id}" title="${tr('Flag for review')}" style="${s.flag?'color:var(--bad)':''}">${ic('flag')}</button><button class="icon-btn" data-a="editSub" data-id="${s.id}" title="${tr('Edit')}">${ic('edit')}</button><button class="icon-btn" data-a="delSub" data-id="${s.id}" title="${tr('Delete')}">${ic('trash')}</button></td></tr>`}).join('')}</tbody>
+  </table>${S.subs.length?'':`<div class="empty">${tr("Add streaming, software, gym and cloud storage. It's easy to forget one or two.")}</div>`}</div></div>`;
+}
+
+function vHabits(){
+  const t=today(),days=[...Array(14)].map((_,i)=>addDays(t,i-13));
+  return `
+  <div class="head"><div><h1>${tr('Habits')}</h1><p>${tr('Small things, done daily. Tap a square to mark a day.')}</p></div>
+  <button class="btn primary" data-a="addHabit">${ic('plus')}${tr('New habit')}</button></div>
+  <div class="card"><div class="list">${S.habits.map(h=>`<div class="li" style="flex-wrap:wrap;gap:14px;padding:14px 2px">
+    <div class="grow" style="min-width:160px"><div class="t">${esc(h.name)}</div><div class="m">🔥 ${trn(streak(h),'{n} day streak|{n} day streak')} · ${tr('{p}% last 30 days',{p:rate(h)})}</div></div>
+    <div class="dots">${days.map(d=>`<button class="dot ${h.log[d]?'on':''} ${d===t?'today':''}" data-a="togHabit" data-id="${h.id}" data-d="${d}" title="${dayLabel(d)}"></button>`).join('')}</div>
+    <button class="icon-btn" data-a="delHabit" data-id="${h.id}" aria-label="${tr('Delete')}">${ic('trash')}</button></div>`).join('')||`<div class="empty">${tr('Try “Walk 20 minutes”, “Read 10 pages” or “No phone after 10pm”.')}</div>`}</div></div>`;
+}
+
+function vGoals(){
+  const t=today();
+  return `
+  <div class="head"><div><h1>${tr('Goals')}</h1><p>${tr('Break big things into steps you can actually take.')}</p></div>
+  <button class="btn primary" data-a="addGoal">${ic('plus')}${tr('New goal')}</button></div>
+  <div class="grid g2" style="align-items:start">${S.goals.map(g=>{const p=prog(g),n=g.due?diffDays(t,g.due):null;
+    return`<div class="card goal"><div class="top"><div><h3>${esc(g.title)}</h3>${g.why?`<div class="why">${esc(g.why)}</div>`:''}</div>
+      <div class="row" style="flex-wrap:nowrap">${p===100?`<span class="pill good">${tr('Done')}</span>`:n!==null?`<span class="pill ${n<0?'bad':n<14?'warn':''}">${n<0?tr('{n}d overdue',{n:Math.abs(n)}):tr('{n}d left',{n})}</span>`:''}<button class="icon-btn" data-a="delGoal" data-id="${g.id}" aria-label="${tr('Delete')}">${ic('trash')}</button></div></div>
+      <div><div class="row" style="justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px"><span>${tr('Steps: {a} of {b}',{a:g.steps.filter(s=>s.done).length,b:g.steps.length})}</span><span>${p}%</span></div><div class="bar ${p===100?'good':''}"><i style="width:${p}%"></i></div></div>
+      <div class="list">${g.steps.map((s,i)=>`<div class="li ${s.done?'done':''}" style="padding:7px 2px"><button class="check ${s.done?'on':''}" data-a="togStep" data-id="${g.id}" data-i="${i}">${ic('check')}</button><div class="grow t" style="font-weight:500">${esc(s.t)}</div><button class="icon-btn" data-a="delStep" data-id="${g.id}" data-i="${i}">${ic('trash')}</button></div>`).join('')}</div>
+      <div class="inline-add" style="margin-top:0"><input class="inp step-in" data-id="${g.id}" placeholder="${tr('Add a step…')}" maxlength="140"><button class="btn sm" data-a="addStep" data-id="${g.id}">${tr('Add')}</button></div>
+    </div>`}).join('')||`<div class="card"><div class="empty">${tr('No goals yet. What do you want to be true 90 days from now?')}</div></div>`}</div>`;
+}
+
+function vSettings(){
+  const st=S.settings;
+  return `
+  <div class="head"><div><h1>${tr('Settings')}</h1><p>${tr('Calmdeck stores everything in this browser on this device. Back up regularly.')}</p></div></div>
+  <div class="grid g2" style="align-items:start">
+    <div class="card fm" style="padding:18px"><h2>${tr('Preferences')}</h2>
+      <label><span>${tr('Language')}</span><select id="sLang">${LANGS.map(([k,l])=>`<option value="${k}" ${k===(st.lang||'auto')?'selected':''}>${k==='auto'?tr(l):l}</option>`).join('')}</select></label>
+      <label><span>${tr('Your first name')}</span><input id="sName" value="${esc(st.name)}" maxlength="40" placeholder="${tr('Optional')}"></label>
+      <label><span>${tr('Currency symbol')}</span><select id="sCur">${['$','€','£','₽','₴','₸','¥','₹','₩','R$','A$','C$','CHF','kr','zł','₱','₦','R'].map(c=>`<option ${c===st.currency.trim()?'selected':''}>${c}</option>`).join('')}</select></label>
+      <label><span>${tr('Theme')}</span><select id="sTheme">${[['auto','Auto'],['light','Light'],['dark','Dark']].map(([k,l])=>`<option value="${k}" ${k===st.theme?'selected':''}>${tr(l)}</option>`).join('')}</select></label>
+    </div>
+    <div class="card"><h2>${tr('Your data')}</h2>
+      <p style="margin:0 0 14px;color:var(--ink-2)">${lock(14)} ${tr('Your data stays on this device. Calmdeck never sends it anywhere, unless you connect the optional AI Coach, which shares a summary only while you chat. To move to another device, export a backup and import it there.')}</p>
+      <div class="row"><button class="btn primary" data-a="export">${tr('Export backup')}</button><button class="btn" data-a="import">${tr('Import backup')}</button><button class="btn" data-a="csv">${tr('Transactions CSV')}</button></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+      <div class="row"><button class="btn" data-a="loadDemo">${tr('Load sample data')}</button><button class="btn danger" data-a="reset">${tr('Erase everything')}</button></div>
+    </div>
+  </div>
+  <p style="color:var(--muted);font-size:12.5px;margin-top:24px">${STANDALONE?tr('Running as an installed app.')+' ':''}Calmdeck v1.3 · ${tr('Keyboard: {n} new expense · {r} switch sections',{n:'<span class="kbd">N</span>',r:'<span class="kbd">1</span>–<span class="kbd">7</span>'})}</p>`;
+}
+const V={today:vToday,money:vMoney,subs:vSubs,habits:vHabits,goals:vGoals,coach:vCoach,settings:vSettings};
+
+/* ---------- Calmdeck Brain: insights computed on this device (no AI, no network) ---------- */
+const prevMonth=m=>{const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const FIXED=['Housing','Bills','Subscriptions'];
+const spentUntil=(m,cat,day)=>txIn(m).filter(x=>x.type==='out'&&(!cat||x.cat===cat)&&+x.date.slice(8)<=day).reduce((a,x)=>a+x.amt,0);
+function weekdayPattern(){
+  const t=today(),from=addDays(t,-62);
+  const out=S.tx.filter(x=>x.type==='out'&&x.date>from&&x.date<=t&&x.cat!=='Housing'&&x.cat!=='Bills');
+  if(out.length<15)return null;
+  const sum=[0,0,0,0,0,0,0];out.forEach(x=>sum[dt(x.date).getDay()]+=x.amt);
+  const avg=sum.reduce((a,b)=>a+b,0)/7;if(!avg)return null;
+  const i=sum.indexOf(Math.max(...sum)),p=Math.round((sum[i]/avg-1)*100);
+  return p>=40?{day:WDN[LANG][i],p}:null;
+}
+function habitSplit(h){
+  let wd=0,wdn=0,we=0,wen=0;
+  for(let i=1;i<=28;i++){const d=addDays(today(),-i),w=dt(d).getDay(),on=h.log[d]?1:0;if(w===0||w===6){we+=on;wen++}else{wd+=on;wdn++}}
+  return{wd:Math.round(wd/wdn*100),we:Math.round(we/wen*100)};
+}
+function insights(){
+  const out=[],t=today(),m=t.slice(0,7),pm=prevMonth(m),dom=dt(t).getDate(),dim=daysInMonth(m),left=dim-dom+1,hour=new Date().getHours();
+  const add=(tone,icon,title,text,score)=>out.push({tone,icon,title,text,score});
+  const sp=spent(m),bud=totalBudget();
+  if(bud&&dom>=5&&sp>0){
+    // Fixed costs (rent, bills, subscriptions) happen once a month; only day-to-day spending is extrapolated.
+    const fixed=FIXED.reduce((x,c)=>x+spent(m,c),0),proj=fixed+(sp-fixed)/dom*dim,over=proj-bud;
+    if(sp>=bud)add('bad','🚨',tr('Monthly budget used up'),trn(left,"You've spent {x} of {y} with {n} day left.|You've spent {x} of {y} with {n} days left.",{x:money(Math.round(sp)),y:money(bud)}),95);
+    else if(over>bud*.03)add('bad','📉',tr('Heading about {x} over budget',{x:money(Math.round(over))}),tr("At this pace you'll spend around {x} this month. Keeping to {y} a day brings you back on track.",{x:money(Math.round(proj)),y:money(Math.floor((bud-sp)/left))}),90);
+    else if(over>0)add('warn','⚖️',tr('Right at your limit'),tr("At this pace you'll spend around {x}, just over your {y} budget. A few small cuts keep you inside it.",{x:money(Math.round(proj)),y:money(bud)}),64);
+    else add('good','✅',tr('On track this month'),tr("At this pace you'll spend around {x}, inside your {y} budget.",{x:money(Math.round(proj)),y:money(bud)}),35);
+  }
+  CATS.forEach(c=>{
+    const s=spent(m,c),b=+S.budgets[c]||0,ps=spentUntil(pm,c,dom),cn=catName(c);
+    if(b&&s>b)add('bad','⚠️',tr('{c} is over budget',{c:cn}),tr('{x} spent of {y}, {z} over.',{x:money(Math.round(s)),y:money(b),z:money(Math.round(s-b))}),85);
+    else if(b&&s>=b*.85&&left>5&&!FIXED.includes(c))add('warn','⏳',tr('{c} budget almost used',{c:cn}),trn(left,'{p}% used with {n} day still to go.|{p}% used with {n} days still to go.',{p:Math.round(s/b*100)}),70);
+    if(c==='Housing'||ps<40)return;
+    if(s>=ps*1.3)add('warn','📈',tr('{c} spending up {p}%',{c:cn,p:Math.round((s/ps-1)*100)}),tr('{x} so far this month vs {y} by the same day last month.',{x:money(Math.round(s)),y:money(Math.round(ps))}),60);
+    else if(s<=ps*.7)add('good','👏',tr('{c} spending down {p}%',{c:cn,p:Math.round((1-s/ps)*100)}),tr('{x} so far vs {y} by this point last month.',{x:money(Math.round(s)),y:money(Math.round(ps))}),45);
+  });
+  const wp=weekdayPattern();
+  if(wp)add('info','🗓️',tr('You spend most {day}',{day:wp.day}),tr('About {p}% more than your average day over the last two months, not counting rent and bills.',{p:wp.p}),50);
+  const inc=income(m),pinc=income(pm);
+  if(pinc>0){const r=Math.round((pinc-spent(pm))/pinc*100);
+    add(r>=20?'good':r>=0?'info':'bad','💰',tr('Last month you saved {p}% of your income',{p:r}),r>=20?tr("That's a strong savings rate. Keep it up."):r>=0?tr('A common target is 20%. Small cuts add up fast.'):tr('You spent more than you earned last month.'),r<0?80:30)}
+  const subsM=subsYearly()/12;
+  if(inc>0&&subsM/inc>=.07)add('warn','🔁',tr('Subscriptions take {p}% of your income',{p:Math.round(subsM/inc*100)}),tr("That's {x} a month, or {y} a year.",{x:money(Math.round(subsM)),y:money(Math.round(subsM*12))}),65);
+  const fl=S.subs.filter(s=>s.flag);
+  if(fl.length)add('warn','✂️',tr('Save {x} a year',{x:money(Math.round(fl.reduce((a,s)=>a+subYear(s),0)))}),tr('by cancelling the subscriptions you flagged: {list}.',{list:fl.map(s=>s.name).join(', ')}),75);
+  S.subs.forEach(s=>{
+    const h=(s.hist||[]).slice(-1)[0];
+    if(h&&h.to>h.from&&diffDays(h.date,t)<=60)add('warn','💸',tr('{s} went up {p}%',{s:s.name,p:Math.round((h.to/h.from-1)*100)}),tr("From {x} to {y}. That's {z} more per year.",{x:money2(h.from),y:money2(h.to),z:money(Math.round((h.to-h.from)*PER_YEAR[s.cycle]))}),72);
+    const n=diffDays(t,s.next);
+    if(n>=0&&n<=3)add('info','🔔',n===0?tr('{s} renews today',{s:s.name}):n===1?tr('{s} renews tomorrow',{s:s.name}):trn(n,'{s} renews in {n} day|{s} renews in {n} days',{s:s.name}),tr('{x} will be charged. Still worth it?',{x:money2(s.amt)}),s.cycle==='yearly'?78:58);
+    else if(s.cycle==='yearly'&&n>3&&n<=14)add('info','📅',tr('Big renewal coming: {s}',{s:s.name}),tr("{x} on {d}. Cancel before then if you don't need it.",{x:money2(s.amt),d:dayLabel(s.next)}),62);
+  });
+  let best=null;
+  S.habits.forEach(h=>{
+    const st=streak(h);if(!best||st>best.st)best={h,st};
+    if(st>=3&&!h.log[t]&&hour>=17)add('warn','⏰',trn(st,'Keep your {n}-day streak alive|Keep your {n}-day streak alive'),tr("“{h}” isn't checked off yet today.",{h:h.name}),82);
+    const x=habitSplit(h);
+    if(x.wd>=50&&x.wd-x.we>=30)add('info','🌗',tr('“{h}” slips on weekends',{h:h.name}),tr('Done on {a}% of weekdays but {b}% of weekends over the last 4 weeks. Try a weekend-specific time or cue.',{a:x.wd,b:x.we}),55);
+  });
+  if(best&&best.st>=7)add('good','🔥',trn(best.st,'{n}-day streak: {h}|{n}-day streak: {h}',{h:best.h.name}),tr('Consistency like this is what makes a habit stick.'),48);
+  S.goals.forEach(g=>{
+    const p=prog(g),n=g.due?diffDays(t,g.due):null;if(p===100)return;
+    if(!g.steps.length)add('info','🧩',tr('Break “{g}” into steps',{g:g.title}),tr('Goals with small, concrete steps are far more likely to get done.'),52);
+    else if(n!==null&&n<0)add('bad','🎯',trn(-n,'“{g}” is {n} day overdue|“{g}” is {n} days overdue',{g:g.title}),tr('{p}% done. Set a new realistic date, or cut the scope.',{p}),76);
+    else if(n!==null&&n<=14&&p<50)add('warn','🎯',trn(n,'“{g}” is due in {n} day|“{g}” is due in {n} days',{g:g.title}),tr("Only {p}% done. What's the one next step?",{p}),68);
+  });
+  return out.sort((a,b)=>b.score-a.score);
+}
+function learned(){
+  const t=today(),m=t.slice(0,7),L=[];
+  const months=[];let x=m;for(let i=0;i<3;i++){x=prevMonth(x);if(txIn(x).length)months.push(x)}
+  if(months.length){
+    const avg=months.reduce((a,k)=>a+spent(k),0)/months.length;
+    L.push(trn(months.length,'Typically spends about {x} a month (average of the last {n} month).|Typically spends about {x} a month (average of the last {n} months).',{x:money(Math.round(avg))}));
+    const inc=months.reduce((a,k)=>a+income(k),0)/months.length;
+    if(inc)L.push(tr('Typical monthly income: about {x}.',{x:money(Math.round(inc))}));
+  }
+  const from=addDays(t,-90),cat={};
+  S.tx.filter(x=>x.type==='out'&&x.date>from).forEach(x=>cat[x.cat]=(cat[x.cat]||0)+x.amt);
+  const top=Object.entries(cat).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  if(top.length)L.push(tr('Biggest spending areas lately: {list}.',{list:top.map(([c,v])=>`${catName(c)} (${money(Math.round(v))})`).join(', ')}));
+  const wp=weekdayPattern();if(wp)L.push(tr('Spends the most {day}.',{day:wp.day}));
+  if(S.subs.length)L.push(tr('Subscriptions: {n}, costing {x} a year.',{n:S.subs.length,x:money(Math.round(subsYearly()))}));
+  if(S.habits.length){
+    const r=S.habits.map(h=>({n:h.name,r:rate(h)})).sort((a,b)=>b.r-a.r);
+    L.push(tr('Most consistent habit: “{h}” ({p}% of days).',{h:r[0].n,p:r[0].r}));
+    if(r.length>1)L.push(tr('Hardest habit to keep: “{h}” ({p}% of days).',{h:r[r.length-1].n,p:r[r.length-1].r}));
+  }
+  if(S.goals.length)L.push(tr('Goals: {n}, completed: {d}.',{n:S.goals.length,d:S.goals.filter(g=>prog(g)===100).length}));
+  return L;
+}
+const insCard=i=>`<div class="ins ${i.tone}"><div class="dotc">${i.icon}</div><div><b>${esc(i.title)}</b><span>${esc(i.text)}</span></div></div>`;
+function insightsCard(n){
+  const ins=insights().slice(0,n);if(!ins.length)return'';
+  return`<div class="card" style="margin-bottom:16px"><h2>${tr('Calmdeck noticed')} <button class="btn sm ghost" data-a="goCoach" data-id="insights">${tr('See all')}</button></h2><div class="list">${ins.map(insCard).join('')}</div></div>`;
+}
+
+/* ---------- AI Coach (optional, user's own Anthropic key) ---------- */
+// Called with fetch: a single offline HTML file has no build step to bundle the SDK.
+const MODELS=[
+  ['claude-haiku-5-5','Claude Haiku 5.5','Fastest and cheapest. Typically under €1 a month'],
+  ['claude-sonnet-5-5','Claude Sonnet 5.5','Smarter and more thoughtful. Typically €2–12 a month'],
+  ['claude-opus-5-5','Claude Opus 5.5','Most capable, highest cost'],
+];
+const AI_STORE='keel-ai';
+let ctab='insights',showSetup=false,busy=false;
+function ai(){if(DEMO)return null;try{const v=JSON.parse(localStorage.getItem(AI_STORE));return v&&v.key?v:null}catch(e){return null}}
+function setAi(v){try{v?localStorage.setItem(AI_STORE,JSON.stringify(v)):localStorage.removeItem(AI_STORE)}catch(e){}}
+
+const COACH_RULES=`You are Calmdeck Coach, the AI coach inside Calmdeck, a private personal app for money, subscriptions, habits, goals and weekly focus. You are talking with the app's owner. Their live Calmdeck data is provided below the rules.
+
+How to help:
+- Always reply in the language named under "Reply language" in the data block, even if the data itself is in another language.
+- Be practical and specific. Use their real numbers from the data. Prefer one to three concrete next steps over long lists.
+- Keep replies short (under about 180 words) unless they ask for a plan, a review, a letter or more detail.
+- Match the coaching style they chose.
+- Write plain text with short paragraphs and "-" bullets. Use **bold** sparingly. No tables or headings.
+- When they ask you to draft something (a cancellation email, a complaint, a message), write it ready to copy.
+- Never invent numbers or facts about them. If data is missing, say so and ask.
+
+Limits:
+- You are an AI. You are not a lawyer, accountant, tax adviser, doctor or licensed financial adviser. You can explain general concepts, organise information and draft documents, and you say plainly when something should be checked with a professional.
+- Never recommend specific investment products, stocks, funds, crypto or trades. General education about budgeting, saving and debt is fine.
+- If they mention a crisis, self-harm, abuse or an emergency, respond with care and point them to local emergency services or a crisis line.
+
+Memory:
+- When they tell you something lasting and useful about themselves (their situation, a goal, a preference, a constraint), save it by adding it on its own line at the very end of your reply, like this: <remember>Saving for a wedding in June 2027</remember>
+- Write saved facts in the reply language. Save at most two facts per reply, written in the third person and in under 20 words each. Don't save anything already listed under "Things Calmdeck remembers". Don't save health, sexuality, religion or political details unless they explicitly ask you to remember them.`;
+
+function buildContext(){
+  const t=today(),m=t.slice(0,7),pm=prevMonth(m),dom=dt(t).getDate(),dim=daysInMonth(m),M=S.memory,L=[],P=s=>L.push(s);
+  P(`Reply language: ${LANG_EN[LANG]}.`);
+  P(`Today: ${dt(t).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} (day ${dom} of ${dim}). Currency symbol: ${S.settings.currency||'$'}.`);
+  P('\n## About them');
+  if(S.settings.name)P('Name: '+S.settings.name);
+  P('Preferred coaching style: '+({gentle:'gentle and encouraging',balanced:'balanced',direct:'direct, no sugar-coating'}[M.style]||'balanced'));
+  if(M.about)P('About: '+M.about);
+  if(M.priorities)P('What matters most to them now: '+M.priorities);
+  if(M.facts.length){P('Things Calmdeck remembers:');M.facts.forEach(f=>P('- '+f.text))}
+  const Ln=learned();if(Ln.length){P('Patterns learned from their data:');Ln.forEach(l=>P('- '+l))}
+  P(`\n## Money this month (${m})`);
+  P(`Income ${money(income(m))}; spent ${money(spent(m))}; total monthly budget ${totalBudget()?money(totalBudget()):'not set'}.`);
+  CATS.forEach(k=>{const s=spent(m,k),b=+S.budgets[k]||0,ps=spentUntil(pm,k,dom);if(s||b||ps)P(`- ${k}: spent ${money(Math.round(s))}${b?' of a '+money(b)+' budget':''}; by the same day last month ${money(Math.round(ps))}`)});
+  P(`Last month (${pm}): income ${money(income(pm))}, spent ${money(spent(pm))}.`);
+  const rec=[...S.tx].sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0).slice(0,30);
+  if(rec.length){P('Recent transactions, newest first:');rec.forEach(x=>P(`- ${x.date} ${x.type==='in'?'+':'-'}${money2(x.amt)} ${x.desc} [${x.type==='in'?'Income':x.cat}]`))}
+  P('\n## Subscriptions');
+  if(S.subs.length)S.subs.forEach(s=>P(`- ${s.name}: ${money2(s.amt)} ${s.cycle} (${money(Math.round(subYear(s)))} a year), next renewal ${s.next}${s.flag?', flagged to review':''}${s.note?', note: '+s.note:''}`));else P('None recorded.');
+  P('\n## Habits');
+  if(S.habits.length)S.habits.forEach(h=>P(`- ${h.name}: ${streak(h)}-day streak, done ${rate(h)}% of the last 30 days, ${h.log[t]?'done':'not done yet'} today`));else P('None recorded.');
+  P('\n## Goals');
+  if(S.goals.length)S.goals.forEach(g=>P(`- ${g.title}${g.due?' (due '+g.due+')':''}: ${prog(g)}% done${g.why?'. Why: '+g.why:''}${g.steps.length?'. Steps: '+g.steps.map(s=>(s.done?'[done] ':'[todo] ')+s.t).join('; '):''}`));else P('None recorded.');
+  P("\n## This week's focus");
+  if(S.focus.items.length)S.focus.items.forEach(f=>P(`- ${f.done?'[done]':'[todo]'} ${f.t}`));else P('None set.');
+  const ins=insights();if(ins.length){P('\n## Calmdeck Brain insights right now');ins.slice(0,8).forEach(i=>P(`- ${i.title}: ${i.text}`))}
+  return L.join('\n');
+}
+
+async function apiErr(res){
+  let msg='';try{const j=await res.json();msg=(j.error&&j.error.message)||''}catch(e){}
+  if(/credit balance/i.test(msg))return tr('Your Anthropic account is out of credit. Add credit at console.anthropic.com, under Billing.');
+  if(res.status===401)return tr('Anthropic rejected that API key. Check it in Coach → AI Coach → Settings.');
+  if(res.status===403)return tr("This API key isn't allowed to use that model.");
+  if(res.status===404)return tr("That model isn't available on your account. Pick another model in Settings.");
+  if(res.status===429)return tr('Too many requests, or your spend limit was reached. Wait a minute, or check your limits at console.anthropic.com.');
+  if(res.status>=500)return tr('The AI service is busy right now. Try again in a moment.');
+  return tr('The AI service returned an error.')+(msg?' '+msg:'');
+}
+async function callClaude(cfg,messages,{stream=true,max=4000,system}={}){
+  const go=withFallback=>{
+    const headers={'content-type':'application/json','x-api-key':cfg.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+    const body={model:cfg.model,max_tokens:max,stream,output_config:{effort:'low'},messages};
+    if(system)body.system=system;
+    // Server-side refusal fallback for Sonnet/Opus (Haiku has none).
+    if(withFallback){headers['anthropic-beta']='server-side-fallback-2026-07-01';body.fallbacks='default'}
+    return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify(body)});
+  };
+  const fb=cfg.model!=='claude-haiku-5-5';
+  let res;
+  try{
+    res=await go(fb);
+    if(fb&&res.status===400&&/fallback/i.test(await res.clone().text()))res=await go(false);
+  }catch(e){throw new Error(tr("Couldn't reach the AI service. Check your internet connection."))}
+  if(!res.ok)throw new Error(await apiErr(res));
+  return res;
+}
+const fmtMsg=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^#+\s*/gm,'');
+const visible=s=>s.split('<remember')[0];
+const thinking=()=>`<span class="typing">${tr('Thinking')}</span>`;
+function msgHtml(m){
+  const v=visible(m.content);
+  return`<div class="msg ${m.role}${m.err?' err':''}"${m.pending?' id="pending"':''}>${m.role==='assistant'?fmtMsg(v):esc(v)}${m.pending&&!v?thinking():''}${(m.saved||[]).map(f=>`<div class="saved">🧠 ${tr('Remembered:')} ${esc(f)}</div>`).join('')}</div>`;
+}
+const scrollChat=()=>{const c=$('#chat');if(c)c.scrollTop=c.scrollHeight};
+function paint(a){const el=document.getElementById('pending');if(el){el.innerHTML=fmtMsg(visible(a.content))||thinking();scrollChat()}}
+
+async function sendChat(text){
+  const cfg=ai();text=(text||'').trim();
+  if(!cfg||!text||busy)return;
+  S.chat.push({role:'user',content:text,t:Date.now()});
+  const a={role:'assistant',content:'',t:Date.now(),pending:true};
+  S.chat.push(a);busy=true;commit();scrollChat();
+  const hist=S.chat.filter(m=>!m.pending&&!m.err&&m.content).slice(-30).map(m=>({role:m.role,content:m.role==='assistant'?visible(m.content):m.content}));
+  while(hist.length&&hist[0].role!=='user')hist.shift();
+  const system=[{type:'text',text:COACH_RULES,cache_control:{type:'ephemeral'}},{type:'text',text:'# Their Calmdeck data (live)\n'+buildContext()}];
+  try{
+    const res=await callClaude(cfg,hist,{system});
+    const reader=res.body.getReader(),dec=new TextDecoder();let buf='',stop=null;
+    for(;;){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});let i;
+      while((i=buf.indexOf('\n\n'))>=0){
+        const chunk=buf.slice(0,i);buf=buf.slice(i+2);
+        const line=chunk.split('\n').find(l=>l.startsWith('data:'));if(!line)continue;
+        let ev;try{ev=JSON.parse(line.slice(5))}catch(_){continue}
+        if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){a.content+=ev.delta.text;paint(a)}
+        else if(ev.type==='message_delta'&&ev.delta&&ev.delta.stop_reason)stop=ev.delta.stop_reason;
+        else if(ev.type==='error')throw new Error((ev.error&&ev.error.message)||tr('The AI service returned an error.'));
+      }
+    }
+    if(stop==='refusal'&&!visible(a.content).trim())a.content=tr("I can't help with that one, but I'm happy to help with your money, habits or goals.");
+    if(stop==='max_tokens')a.content+='\n\n('+tr('Reply cut short.')+')';
+    const saved=[];
+    a.content=a.content.replace(/<remember>([\s\S]*?)<\/remember>/g,(_,f)=>{
+      f=f.trim().slice(0,200);
+      if(f&&saved.length<2&&!S.memory.facts.some(x=>x.text.toLowerCase()===f.toLowerCase())){S.memory.facts.push({id:uid(),text:f,src:'coach',date:today()});saved.push(f)}
+      return'';
+    }).replace(/<remember>[\s\S]*$/,'').trim();
+    if(saved.length)a.saved=saved;
+    if(!a.content)a.content=tr('(No reply. Please try again.)');
+  }catch(e){a.content=e.message||String(e);a.err=true}
+  finally{delete a.pending;busy=false;if(S.chat.length>200)S.chat=S.chat.slice(-200);commit();scrollChat()}
+}
+
+const QP=[
+  ['📋','Weekly review','Give me my weekly review: how my money, habits and goals went, one win, one thing to fix, and my top 3 priorities for next week.'],
+  ['✂️','Cut my costs','Look at my spending and subscriptions. Where can I realistically save money this month? Be specific with amounts.'],
+  ['💶','Can I afford…',null],
+  ['🗓️','Plan my week','Help me plan this week around my focus items, habits and goals. Keep it realistic.'],
+  ['✉️','Cancellation email','Draft a short, polite email to cancel one of my flagged subscriptions, or the one I seem to use least. Make it ready to copy.'],
+  ['🎯','Unstick a goal','Which of my goals is most stuck, and what is the smallest next step I can take today?'],
+];
+
+function vCoach(){
+  const tabs=[['insights','Insights'],['chat','AI Coach'],['me','About me']];
+  const body=ctab==='chat'?coachChat():ctab==='me'?coachMe():coachInsights();
+  return`<div class="head"><div><h1>${tr('Coach')}</h1><p>${tr('Calmdeck Brain spots patterns on your device. The optional AI coach helps you act on them.')}</p></div>
+  <div class="seg">${tabs.map(([k,l])=>`<button class="${k===ctab?'on':''}" data-a="ctab" data-id="${k}">${tr(l)}</button>`).join('')}</div></div>${body}`;
+}
+function coachInsights(){
+  const all=insights();
+  return`<div class="card"><h2>${tr('What Calmdeck noticed')} <small>${tr('Worked out on this device · no AI, no internet')}</small></h2>
+  <div class="list">${all.map(insCard).join('')||`<div class="empty">${tr('Add some expenses, subscriptions and habits, and Calmdeck will start spotting patterns.')}</div>`}</div></div>
+  <div class="callout" style="margin-top:16px"><div>${tr('Want to talk it through? The {b}AI Coach{/b} can turn these into a plan.',{b:'<b>','/b':'</b>'})}</div><button class="btn sm primary" data-a="ctab" data-id="chat">${tr('Open AI Coach')}</button></div>`;
+}
+function coachMe(){
+  const M=S.memory,L=learned();
+  return`<div class="grid g2" style="align-items:start">
+  <div class="card fm" style="padding:18px"><h2>${tr('About me')} <small>${tr('Helps the coach fit its advice to you')}</small></h2>
+    <label><span>${tr('About me')}</span><textarea id="memAbout" rows="4" maxlength="1500" placeholder="${tr('e.g. 29, freelance designer, living with my partner in Lyon. Income changes month to month.')}">${esc(M.about)}</textarea></label>
+    <label><span>${tr('What matters most to me right now')}</span><textarea id="memPri" rows="3" maxlength="1000" placeholder="${tr('e.g. Build savings, get fit before summer, stop impulse shopping.')}">${esc(M.priorities)}</textarea></label>
+    <label><span>${tr('Coaching style')}</span><select id="memStyle">${[['gentle','Gentle and encouraging'],['balanced','Balanced'],['direct','Direct, no sugar-coating']].map(([k,l])=>`<option value="${k}" ${k===M.style?'selected':''}>${tr(l)}</option>`).join('')}</select></label>
+  </div>
+  <div class="grid">
+    <div class="card"><h2>${tr('Things Calmdeck remembers')} <small>${M.facts.length}</small></h2>
+      <div class="list">${M.facts.map(f=>`<div class="li"><div class="grow"><div style="font-weight:500">${esc(f.text)}</div><div class="m">${f.src==='coach'?tr('Learned in a chat'):tr('Added by you')} · ${dayLabel(f.date)}</div></div><button class="icon-btn" data-a="delFact" data-id="${f.id}" aria-label="${tr('Forget')}">${ic('trash')}</button></div>`).join('')||`<div class="empty">${tr('Nothing yet. Add facts yourself, or the AI coach will save them as you chat.')}</div>`}</div>
+      <div class="inline-add"><input class="inp" id="factIn" placeholder="${tr('Add something Calmdeck should remember')}" maxlength="200"><button class="btn" data-a="addFact">${tr('Add')}</button></div>
+    </div>
+    <div class="card"><h2>${tr('Patterns learned from your data')} <small>${tr('Updates automatically')}</small></h2>
+      <div class="list">${L.map(l=>`<div class="li"><div class="grow" style="font-size:13.5px">${esc(l)}</div></div>`).join('')||`<div class="empty">${tr('Patterns appear as you use Calmdeck.')}</div>`}</div>
+    </div>
+  </div></div>
+  <p style="color:var(--muted);font-size:12.5px;margin-top:16px">${lock(13)} ${tr("Stored only on this device. It's sent to the AI provider only while you chat with the AI coach.")}</p>`;
+}
+function coachChat(){
+  const cfg=ai();
+  if(!DEMO&&(!cfg||showSetup))return aiSetup(cfg);
+  const model=(cfg&&MODELS.find(x=>x[0]===cfg.model))||MODELS[0];
+  return`<div class="card">
+  <div class="row" style="justify-content:space-between;margin-bottom:8px;align-items:flex-start">
+    <div><b>${tr('AI Coach')}</b> <span class="pill acc">${DEMO?tr('Example chat'):esc(model[1])}</span><div class="ai-label">${tr("You're chatting with an AI. It can make mistakes and isn't legal, tax or investment advice.")}</div></div>
+    ${DEMO?'':`<div class="row"><button class="btn sm ghost" data-a="showCtx">${tr("What's shared")}</button><button class="btn sm ghost" data-a="clearChat">${tr('Clear')}</button><button class="btn sm ghost" data-a="aiSettings">${tr('Settings')}</button></div>`}
+  </div>
+  <div class="chat" id="chat">${S.chat.length?S.chat.map(msgHtml).join(''):`<div class="empty" style="margin:auto">${tr('Ask anything about your money, habits or goals. The coach sees your Calmdeck data, so its answers use your real numbers.')}</div>`}</div>
+  <div class="chips">${QP.map((q,i)=>`<button class="chip" data-a="qp" data-id="${i}" ${DEMO||busy?'disabled':''}>${q[0]} ${tr(q[1])}</button>`).join('')}</div>
+  <div class="composer"><textarea class="inp" id="chatIn" rows="1" maxlength="4000" placeholder="${DEMO?tr('In the full version, connect your AI key to chat'):tr('Message your coach…')}" ${DEMO?'disabled':''}></textarea><button class="btn primary" data-a="send" ${DEMO||busy?'disabled':''}>${busy?'…':tr('Send')}</button></div>
+  </div>`;
+}
+function aiSetup(cfg){
+  cfg=cfg||{};
+  return`<div class="card" style="max-width:660px">
+  <h2>${tr('Connect the AI Coach')} <small>${tr('Optional')}</small></h2>
+  <p style="margin:0 0 12px;color:var(--ink-2)">${tr('The coach uses {b}Claude{/b} by Anthropic with your own API key. You pay Anthropic directly for what you use: usually cents to a few euros a month. Calmdeck never sees your key or your messages. Your device talks straight to Anthropic.',{b:'<b>','/b':'</b>'})}</p>
+  <p style="margin:0 0 14px;padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--ink-2);font-size:13px">🌍 ${tr("Anthropic works in most countries, but not everywhere (for example, not in Russia). If it isn't available where you live, everything else in Calmdeck still works.")}</p>
+  <ol style="margin:0 0 16px;padding-left:20px;color:var(--ink-2);line-height:1.75">
+    <li>${tr('Go to {b}console.anthropic.com{/b} and create an account.',{b:'<b>','/b':'</b>'})}</li>
+    <li>${tr('Add a little credit (for example $5) under {b}Billing{/b}. You can set a monthly spend limit too.',{b:'<b>','/b':'</b>'})}</li>
+    <li>${tr('Create a key under {b}API keys{/b} and paste it below.',{b:'<b>','/b':'</b>'})}</li>
+  </ol>
+  <div class="fm" style="padding:0">
+    <label><span>${tr('API key')}</span><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" value="${esc(cfg.key||'')}"></label>
+    <label><span>${tr('Model')}</span><select id="aiModel">${MODELS.map(([k,l,d])=>`<option value="${k}" ${k===(cfg.model||MODELS[0][0])?'selected':''}>${l}: ${tr(d)}</option>`).join('')}</select></label>
+    <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;color:var(--ink-2)"><input type="checkbox" id="aiConsent" style="width:auto;margin-top:3px;flex:none" ${cfg.key?'checked':''}><span style="margin:0">${tr('I understand that when I chat, a summary of my Calmdeck data (budgets, recent transactions, subscriptions, habits, goals and “About me”) is sent to Anthropic to write the reply.')}</span></label>
+    <div class="row"><button class="btn primary" data-a="aiConnect">${tr('Connect & test')}</button>${cfg.key?`<button class="btn" data-a="ctab" data-id="chat">${tr('Cancel')}</button><button class="btn danger" data-a="aiDisconnect">${tr('Remove key')}</button>`:''}</div>
+  </div>
+  <p style="color:var(--muted);font-size:12.5px;margin:14px 0 0">${tr('Your key is stored only on this device and is never included in backups. Calmdeck Brain insights work without any of this.')}</p>
+  </div>`;
+}
+
+/* ---------- forms ---------- */
+function field(f,v){
+  const val=v??f.def??'';
+  if(f.type==='select')return`<label><span>${f.label}</span><select name="${f.k}">${f.opts.map(o=>{const[k,l]=Array.isArray(o)?o:[o,o];return`<option value="${esc(k)}" ${k==val?'selected':''}>${esc(l)}</option>`}).join('')}</select></label>`;
+  return`<label><span>${f.label}</span><input name="${f.k}" type="${f.type||'text'}" value="${esc(val)}" ${f.req?'required':''} ${f.type==='number'?'step="0.01" min="0" inputmode="decimal"':''} ${f.ph?`placeholder="${esc(f.ph)}"`:''} maxlength="${f.max||120}"></label>`;
+}
+function form(title,fields,init,onSave){
+  const dlg=$('#dlg');
+  const body=fields.map(f=>Array.isArray(f)?`<div class="two">${f.map(x=>field(x,init[x.k])).join('')}</div>`:field(f,init[f.k])).join('');
+  dlg.innerHTML=`<form method="dialog" class="fm"><h3>${esc(title)}</h3>${body}<div class="fm-actions"><button class="btn ghost" value="cancel" formnovalidate>${tr('Cancel')}</button><button class="btn primary" value="ok">${tr('Save')}</button></div></form>`;
+  const fm=dlg.querySelector('form');
+  fm.addEventListener('submit',e=>{
+    if(e.submitter&&e.submitter.value==='cancel')return;
+    e.preventDefault();const o={};
+    fields.flat().forEach(f=>{let v=fm.elements[f.k].value.trim();if(f.type==='number')v=Math.round((parseFloat(v.replace(',','.'))||0)*100)/100;o[f.k]=v});
+    onSave(o);commit();dlg.close();
+  });
+  dlg.showModal();const first=fm.querySelector('input,select');first&&first.focus();
+}
+const txFields=t=>[{k:'desc',label:tr('Description'),req:1,ph:t==='in'?tr('Salary, freelance…'):tr('Groceries, coffee…')},[{k:'amt',label:tr('Amount'),type:'number',req:1,ph:'0.00'},{k:'date',label:tr('Date'),type:'date',req:1,def:today()}],...(t==='out'?[{k:'cat',label:tr('Category'),type:'select',opts:CATS.map(c=>[c,catName(c)])}]:[])];
+function txForm(type,x){
+  form(x?tr('Edit transaction'):type==='in'?tr('Add income'):tr('Add expense'),txFields(type),x||{},o=>{
+    if(x)Object.assign(x,o);else S.tx.push({id:uid(),type,cat:type==='in'?'Income':o.cat,...o});
+    if(!x)toast(type==='in'?tr('Income added'):tr('Expense added'));
+  });
+}
+function subForm(s){
+  form(s?tr('Edit subscription'):tr('Add subscription'),[{k:'name',label:tr('Name'),req:1,ph:tr('e.g. Netflix')},[{k:'amt',label:tr('Price'),type:'number',req:1},{k:'cycle',label:tr('Billing'),type:'select',opts:Object.entries(CYCLES).map(([k,l])=>[k,tr(l)]),def:'monthly'}],{k:'next',label:tr('Next renewal date'),type:'date',req:1,def:addMonths(today(),1)},{k:'note',label:tr('Note (optional)'),ph:tr('Shared with family, annual plan…')}],s||{},o=>{
+    if(s){if(o.amt!==s.amt)(s.hist=s.hist||[]).push({date:today(),from:s.amt,to:o.amt});Object.assign(s,o)}else S.subs.push({id:uid(),flag:false,...o});normalize();
+  });
+}
+
+/* ---------- actions ---------- */
+const find=(arr,id)=>arr.find(x=>x.id===id);
+function commit(){delete S.fresh;save();render()}
+const A={
+  addTx:()=>txForm('out'),addIncome:()=>txForm('in'),
+  editTx:id=>{const x=find(S.tx,id);txForm(x.type,x)},
+  delTx:id=>{S.tx=S.tx.filter(x=>x.id!==id);commit();toast(tr('Transaction deleted'))},
+  month:d=>{const[y,m]=month.split('-').map(Number);const n=new Date(y,m-1+(+d),1);month=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0');render()},
+  editBudgets:()=>form(tr('Monthly budgets'),CATS.filter(c=>c!=='Other').reduce((a,c,i)=>{const f={k:c,label:catName(c),type:'number',ph:tr('No limit')};if(i%2===0)a.push([f]);else a[a.length-1].push(f);return a},[]),S.budgets,o=>{S.budgets={};for(const k in o)if(o[k]>0)S.budgets[k]=o[k];toast(tr('Budgets saved'))}),
+  addSub:()=>subForm(),editSub:id=>subForm(find(S.subs,id)),
+  delSub:id=>{if(confirm(tr('Remove this subscription?'))){S.subs=S.subs.filter(x=>x.id!==id);commit()}},
+  flagSub:id=>{const s=find(S.subs,id);s.flag=!s.flag;commit()},
+  addHabit:()=>form(tr('New habit'),[{k:'name',label:tr('Habit'),req:1,ph:tr('e.g. Walk 20 minutes'),max:60}],{},o=>{S.habits.push({id:uid(),name:o.name,log:{}})}),
+  delHabit:id=>{if(confirm(tr('Delete this habit and its history?'))){S.habits=S.habits.filter(x=>x.id!==id);commit()}},
+  togHabit:(id,el)=>{const h=find(S.habits,id),d=el.dataset.d;if(h.log[d])delete h.log[d];else h.log[d]=1;commit()},
+  addGoal:()=>form(tr('New goal'),[{k:'title',label:tr('Goal'),req:1,ph:tr('e.g. Build a 3-month emergency fund')},{k:'why',label:tr('Why it matters (optional)'),ph:tr('Peace of mind')},{k:'due',label:tr('Target date (optional)'),type:'date'}],{},o=>{S.goals.unshift({id:uid(),steps:[],...o})}),
+  delGoal:id=>{if(confirm(tr('Delete this goal?'))){S.goals=S.goals.filter(x=>x.id!==id);commit()}},
+  togStep:(id,el)=>{const s=find(S.goals,id).steps[el.dataset.i];s.done=!s.done;commit()},
+  delStep:(id,el)=>{find(S.goals,id).steps.splice(el.dataset.i,1);commit()},
+  addStep:id=>{const inp=document.querySelector(`.step-in[data-id="${id}"]`);const v=inp.value.trim();if(!v)return inp.focus();find(S.goals,id).steps.push({t:v,done:false});commit();const n=document.querySelector(`.step-in[data-id="${id}"]`);n&&n.focus()},
+  addFocus:()=>{const inp=$('#focusIn');const v=inp&&inp.value.trim();if(!v)return inp&&inp.focus();S.focus.items.push({t:v,done:false});commit();const n=$('#focusIn');n&&n.focus()},
+  togFocus:i=>{const f=S.focus.items[i];f.done=!f.done;commit()},
+  delFocus:i=>{S.focus.items.splice(i,1);commit()},
+  loadDemo:()=>{if(S.tx.length+S.subs.length+S.habits.length+S.goals.length&&!confirm(tr('Replace your current data with sample data?')))return;const st=S.settings;S=demo();S.settings=Object.assign(S.settings,{currency:st.currency,theme:st.theme,lang:st.lang});commit();toast(tr('Sample data loaded'))},
+  ctab:k=>{ctab=k;showSetup=false;render()},
+  goCoach:k=>{ctab=k||'insights';showSetup=false;if(location.hash==='#coach')render();else location.hash='coach'},
+  send:()=>{const i=$('#chatIn');if(!i)return;const v=i.value;if(!v.trim())return i.focus();i.value='';sendChat(v)},
+  qp:i=>{const q=QP[i];if(!q)return;if(!q[2]){const el=$('#chatIn');el.value=tr('Can I afford ');el.focus();return}sendChat(tr(q[2]))},
+  showCtx:()=>{const d=$('#dlg');d.innerHTML=`<form method="dialog" class="fm"><h3>${tr("What's shared with the AI")}</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:13.5px">${tr('Each time you send a message, this summary and your recent chat go to Anthropic to write the reply. Nothing is sent at any other time.')}</p><pre style="white-space:pre-wrap;font:12px/1.5 var(--mono);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:50vh;overflow:auto;margin:0">${esc(buildContext())}</pre><div class="fm-actions"><button class="btn primary" value="ok">${tr('Close')}</button></div></form>`;d.showModal()},
+  clearChat:()=>{if(confirm(tr('Clear the conversation? Things Calmdeck remembers are kept.'))){S.chat=[];commit()}},
+  aiSettings:()=>{showSetup=true;render()},
+  aiDisconnect:()=>{if(confirm(tr('Remove your API key from this device?'))){setAi(null);showSetup=false;render();toast(tr('Key removed'))}},
+  aiConnect:async(_,btn)=>{
+    const key=($('#aiKey').value||'').trim(),model=$('#aiModel').value;
+    if(!key){toast(tr('Paste your API key first'));return}
+    if(!$('#aiConsent').checked){toast(tr('Please tick the data-sharing box first'));return}
+    btn.disabled=true;btn.textContent=tr('Testing…');
+    try{const res=await callClaude({key,model},[{role:'user',content:'Reply with one word: ready'}],{stream:false,max:400});await res.json();
+      setAi({key,model});showSetup=false;ctab='chat';render();toast(tr('AI Coach connected'))}
+    catch(e){btn.disabled=false;btn.textContent=tr('Connect & test');alert(e.message)}
+  },
+  addFact:()=>{const i=$('#factIn'),v=i&&i.value.trim();if(!v)return i&&i.focus();S.memory.facts.push({id:uid(),text:v.slice(0,200),src:'you',date:today()});commit();const n=$('#factIn');n&&n.focus()},
+  delFact:id=>{S.memory.facts=S.memory.facts.filter(f=>f.id!==id);commit()},
+  hideInstall:()=>{S.settings.hideInstall=true;commit()},
+  install:async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;render()},
+  startFresh:()=>{commit();toast(tr('All set. Start by adding a subscription or two.'))},
+  reset:()=>{if(confirm(tr('Erase ALL Calmdeck data on this device, including what Calmdeck remembers and your AI key? Export a backup first if unsure.'))){const lang=S.settings.lang;S=blank();S.settings.lang=lang;setAi(null);commit();toast(tr('Everything erased'))}},
+  export:()=>{download(`keel-backup-${today()}.json`,JSON.stringify(S,null,2),'application/json');toast(tr('Backup downloaded'))},
+  import:()=>$('#file').click(),
+  csv:()=>{const rows=[[tr('Date'),tr('Type'),tr('Category'),tr('Description'),tr('Amount')]].concat([...S.tx].sort((a,b)=>a.date<b.date?-1:1).map(x=>[x.date,x.type==='in'?tr('Income'):tr('Expense'),x.type==='in'?tr('Income'):catName(x.cat),x.desc,(x.type==='in'?'':'-')+x.amt.toFixed(2)]));
+    download(`keel-transactions-${today()}.csv`,'﻿'+rows.map(r=>r.map(c=>/[",\n]/.test(c)?`"${String(c).replace(/"/g,'""')}"`:c).join(',')).join('\n'),'text/csv')},
+};
+async function download(name,text,type){
+  try{const f=new File([text],name,{type});if(IOS&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==='AbortError')return}
+  legacyDownload(name,text,type)}
+function legacyDownload(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const fn=A[el.dataset.a];if(!fn)return;e.preventDefault();fn(el.dataset.id,el);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='chatIn'){e.preventDefault();A.send()}
+  if(e.key==='Enter'&&e.target.id==='factIn'){e.preventDefault();A.addFact()}
+  if(e.key==='Enter'&&e.target.id==='focusIn'){e.preventDefault();A.addFocus()}
+  if(e.key==='Enter'&&e.target.classList.contains('step-in')){e.preventDefault();A.addStep(e.target.dataset.id)}
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||$('#dlg').open||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key==='n'||e.key==='N'){e.preventDefault();A.addTx()}
+  const n=+e.key;if(n>=1&&n<=VIEWS.length)location.hash=VIEWS[n-1][0];
+});
+document.addEventListener('change',e=>{
+  const id=e.target.id,st=S.settings;
+  if(id==='sName')st.name=e.target.value.trim();
+  else if(id==='sCur')st.currency=e.target.value;
+  else if(id==='sTheme'){st.theme=e.target.value;theme()}
+  else if(id==='sLang'){st.lang=e.target.value;setLang()}
+  else if(id==='memAbout')S.memory.about=e.target.value.trim();
+  else if(id==='memPri')S.memory.priorities=e.target.value.trim();
+  else if(id==='memStyle')S.memory.style=e.target.value;
+  else if(id==='file'){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||!Array.isArray(d.tx))throw 0;const lang=S.settings.lang;S=Object.assign(blank(),d);S.settings=Object.assign(blank().settings,d.settings||{});if(!d.settings||!d.settings.lang)S.settings.lang=lang;normalize();setLang();commit();toast(tr('Backup restored'))}catch(_){alert(tr('That file is not a valid Calmdeck backup.'))}e.target.value=''};r.readAsText(f);return}
+  else return;
+  commit();if(id!=='sTheme')toast(tr('Saved'));
+});
+const mq=matchMedia('(prefers-color-scheme: dark)');
+function theme(){const t=S.settings.theme;document.documentElement.dataset.theme=t==='auto'?(mq.matches?'dark':'light'):t}
+mq.addEventListener&&mq.addEventListener('change',theme);
+
+/* ---------- render ---------- */
+function render(){
+  const keepFocus=document.activeElement&&document.activeElement.id;
+  $('#main').innerHTML=(DEMO?`<div class="callout" style="margin-bottom:20px"><div>${tr('{b}Live demo{/b} with sample data. Click around freely; changes reset when you reload.',{b:'<b>','/b':'</b>'})}</div><a class="btn primary sm" href="../${LANG==='en'?'':LANG+'/'}#pricing" target="_top">${tr('Get Calmdeck')}</a></div>`:'')+V[view]();
+  const nav=VIEWS.map(([k,l])=>`<a class="nav ${k===view?'on':''}" href="#${k}">${ic(k)}${tr(l)}</a>`).join('');
+  $('#side').innerHTML=`<div class="brand">${LOGO}Calmdeck</div>${nav}<div class="foot"><span class="lock">${ic('lock').replace('<svg','<svg width="13" height="13"')} ${tr('Private & offline')}</span><br>${tr('Your data stays on this device.')}</div>`;
+  $('#mnav').innerHTML=VIEWS.filter(v=>v[0]!=='settings').map(([k,l])=>`<button class="${k===view?'on':''}" onclick="location.hash='${k}'">${ic(k)}${tr(l==='Subscriptions'?'Subs':l)}</button>`).join('');
+  if(keepFocus==='focusIn'||keepFocus==='chatIn'){const f=document.getElementById(keepFocus);f&&f.focus()}
+  if(view==='coach'&&ctab==='chat')scrollChat();
+}
+function route(){const h=location.hash.slice(1);view=V[h]?h:'today';render();window.scrollTo(0,0)}
+addEventListener('hashchange',route);
+
+/* ---------- sample data (written in the current language) ---------- */
+function demo(){
+  const s=blank(),t=today(),now=dt(t),m=t.slice(0,7),dom=now.getDate();
+  s.settings.name=tr('Sam');
+  const day=n=>m+'-'+String(Math.max(1,Math.min(n,dom))).padStart(2,'0');
+  s.budgets={Housing:1600,Food:600,Transport:180,Shopping:250,Health:120,Fun:220,Bills:240,Subscriptions:110};
+  const rows=[[1,'Salary',4200,'in'],[1,'Rent',1550,'Housing'],[2,'Groceries',86.4,'Food'],[3,'Monthly transit pass',64,'Transport'],[4,'Coffee & pastry',9.8,'Food'],[5,'Electricity',74.2,'Bills'],[6,'Dinner with friends',58,'Fun'],[7,'Pharmacy',23.5,'Health'],[8,'Groceries',112.3,'Food'],[9,'Running shoes',119,'Shopping'],[10,'Internet',55,'Bills'],[11,'Lunch out',14.2,'Food'],[12,'Concert tickets',90,'Fun'],[13,'Fuel',41,'Transport'],[14,'Groceries',95.1,'Food'],[15,'Freelance invoice',650,'in'],[16,'Phone plan',35,'Bills'],[17,'Takeout',27.4,'Food'],[18,'Book',18.99,'Shopping'],[20,'Groceries',101.7,'Food']];
+  s.tx=rows.map(([d,desc,amt,c])=>({id:uid(),date:day(d),desc:tr(desc),amt,type:c==='in'?'in':'out',cat:c==='in'?'Income':c}));
+  const pm=addMonths(m+'-01',-1).slice(0,7);
+  [['Salary',4200,'in'],['Rent',1550,'Housing'],['Groceries',410,'Food'],['Transit',64,'Transport'],['Utilities',160,'Bills'],['Weekend trip',240,'Fun'],['Clothes',85,'Shopping']].forEach(([desc,amt,c],i)=>s.tx.push({id:uid(),date:pm+'-'+String(3+i*3).padStart(2,'0'),desc:tr(desc),amt,type:c==='in'?'in':'out',cat:c==='in'?'Income':c}));
+  s.subs=[['Netflix',15.49,'monthly',3],['Spotify',11.99,'monthly',9],['iCloud+ 200 GB',2.99,'monthly',17],['Gym membership',39,'monthly',12,'Went 3× last month',true],['Adobe Creative Cloud',59.99,'monthly',21,'Only use it for occasional photo edits',true],['Amazon Prime',139,'yearly',64],['News subscription',4,'weekly',5],['Language app',59.99,'yearly',140],['Password manager',36,'yearly',201]]
+    .map(([name,amt,cycle,d,note,flag])=>({id:uid(),name:tr(name),amt,cycle,next:addDays(t,d),note:note?tr(note):'',flag:!!flag}));
+  const H=[['Walk 20 minutes',.85],['Read 10 pages',.7],['No phone after 10pm',.55],['Drink 2L of water',.8]];
+  s.habits=H.map(([name,p],k)=>{const log={};for(let i=1;i<40;i++){const r=Math.abs(Math.sin((i+1)*(k+3)*12.9898))%1;if(r<p||i<4-k)log[addDays(t,-i)]=1}if(k<2)log[t]=1;return{id:uid(),name:tr(name),log}});
+  const G=(title,why,due,steps)=>({id:uid(),title:tr(title),why:why?tr(why):'',due:addDays(t,due),steps:steps.map(([x,done])=>({t:tr(x,{a:money(400),b:money(3000),c:money(7500)}),done}))});
+  s.goals=[
+    G('Build a 3-month emergency fund','Sleep better and say no to bad jobs',120,[['Open a separate high-yield savings account',true],['Automate {a} on payday',true],['Cancel 2 unused subscriptions',false],['Hit {b} milestone',false],['Hit {c} (3 months of costs)',false]]),
+    G('Run a 10K','Feel strong again',45,[['Buy proper running shoes',true],['Run 3× per week for 4 weeks',true],['Complete a 5K without stopping',true],['Sign up for a local race',false]]),
+    G('Launch a side project','',-3,[['Pick one idea and write a one-page plan',true],['Build a first version',false],['Show it to 10 people',false]]),
+  ];
+  const spf=s.subs.find(x=>x.name==='Spotify');spf.hist=[{date:addDays(t,-20),from:10.99,to:11.99}];
+  s.memory={about:tr('32, product designer, renting a flat with my partner. Paid monthly, plus occasional freelance work.'),priorities:tr('Build an emergency fund, run a 10K, spend less on takeout.'),style:'balanced',
+    facts:[{id:uid(),text:tr('Wants 3 months of expenses saved by spring'),src:'coach',date:addDays(t,-9)},{id:uid(),text:tr('Cooks at home on weeknights but struggles on Fridays'),src:'you',date:addDays(t,-15)}]};
+  const v={trip:money(400),wk:money(100),adobe:money(60)};
+  s.chat=[{role:'user',content:tr('Can I afford a {trip} weekend trip next month?',v),t:0},
+    {role:'assistant',t:0,content:tr("**Yes, with a little planning.** You're close to your budget this month and you saved about 40% of your income last month, so {trip} is realistic.\n\nTo make it painless:\n- Put {wk} aside each week for the next 4 weeks.\n- Fridays are your priciest day. Two home-cooked Fridays cover about a quarter of it.\n- Cancelling Adobe, which you've flagged, frees {adobe} a month on its own.\n\nWant me to add “Weekend trip fund” as a goal with these steps?",v),saved:[tr('Planning a weekend trip next month, budget about {trip}',v)]}];
+  s.focus={week:weekStart(t),items:[{t:tr('Finish the quarterly report'),done:true},{t:tr('Call Mom on Sunday'),done:false},{t:tr('Cancel the Adobe subscription'),done:false}]};
+  return s;
+}
+
+load();theme();route();
+window.__keelMissing=()=>[...MISS];
+if(WEB&&!DEMO){
+  const add=(rel,href)=>{const l=document.createElement('link');l.rel=rel;l.href=href;document.head.appendChild(l)};
+  add('manifest','manifest.webmanifest');add('apple-touch-icon','icons/apple-touch-icon.png');
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(view==='today')render()});
+  addEventListener('appinstalled',()=>{installEvt=null;toast(tr('Calmdeck installed'));render()});
+}
+})();
+</script>
+</body>
+</html>
