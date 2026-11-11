@@ -6,7 +6,7 @@
 <title>Calmdeck: tu dinero, hábitos y metas en una app privada</title>
 <meta name="description" content="Calmdeck es una app privada y sin conexión para iPhone, Android y ordenador: presupuesto, cuánto puedes gastar hoy, control de suscripciones, hábitos y metas en una sola app. Sin cuenta, sin nube, sin suscripción. Pagas una vez y es tuya para siempre.">
 <link rel="canonical" href="https://ilostmywallet2000.github.io/calmdeck/es/">
-<!--ALT--><link rel="alternate" hreflang="en" href="https://ilostmywallet2000.github.io/calmdeck/"><link rel="alternate" hreflang="es" href="https://ilostmywallet2000.github.io/calmdeck/es/"><link rel="alternate" hreflang="ru" href="https://ilostmywallet2000.github.io/calmdeck/ru/"><link rel="alternate" hreflang="x-default" href="https://ilostmywallet2000.github.io/calmdeck/"><meta property="og:locale" content="es_ES"><!--/ALT-->
+<!--ALT--><link rel="alternate" hreflang="en" href="https://ilostmywallet2000.github.io/calmdeck/"><link rel="alternate" hreflang="es" href="https://ilostmywallet2000.github.io/calmdeck/es/"><link rel="alternate" hreflang="ca" href="https://ilostmywallet2000.github.io/calmdeck/ca/"><link rel="alternate" hreflang="ru" href="https://ilostmywallet2000.github.io/calmdeck/ru/"><link rel="alternate" hreflang="x-default" href="https://ilostmywallet2000.github.io/calmdeck/"><meta property="og:locale" content="es_ES"><!--/ALT-->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Calmdeck: tu vida, en calma.">
 <meta property="og:description" content="Presupuesto, suscripciones, hábitos y metas en una app privada que funciona sin conexión. Sin cuenta. Sin suscripción. 19 $ una sola vez.">
@@ -151,6 +151,9 @@ footer a{text-decoration:none;margin-left:22px}footer a:hover{color:var(--ink)}
 @media (max-width:900px){
   .links>a:not(.btn){display:none}
 }
+@media (max-width:520px){
+  .links>.btn{display:none}
+}
 @media (max-width:420px){
   .logo{font-size:0;gap:0}
   .lang a{padding:4px 6px}
@@ -171,7 +174,7 @@ footer a{text-decoration:none;margin-left:22px}footer a:hover{color:var(--ink)}
     <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>Calmdeck</a>
     <nav class="links">
       <a href="#features">Funciones</a><a href="#privacy">Privacidad</a><a href="#pricing">Precio</a><a href="#faq">Preguntas</a>
-      <!--LANG--><div class="lang" role="group" aria-label="Idioma"><a href="../" hreflang="en" lang="en" title="English">EN</a><a href="../es/" hreflang="es" lang="es" title="Español" class="on" aria-current="page">ES</a><a href="../ru/" hreflang="ru" lang="ru" title="Русский">RU</a></div><!--/LANG-->
+      <!--LANG--><div class="lang" role="group" aria-label="Idioma"><a href="../" hreflang="en" lang="en" title="English">EN</a><a href="../es/" hreflang="es" lang="es" title="Español" class="on" aria-current="page">ES</a><a href="../ca/" hreflang="ca" lang="ca" title="Català">CA</a><a href="../ru/" hreflang="ru" lang="ru" title="Русский">RU</a></div><!--/LANG-->
       <a class="btn primary sm" href="#" data-buy>Consigue Calmdeck · 19 $</a>
     </nav>
   </div>
@@ -364,7 +367,7 @@ document.getElementById('yr').textContent=new Date().getFullYear();
   document.querySelectorAll('.lang a').forEach(function(a){a.addEventListener('click',function(){try{localStorage.setItem(K,a.getAttribute('hreflang'))}catch(e){}})});
   if(document.documentElement.lang!=='en')return;
   var want=saved||(navigator.language||'').slice(0,2).toLowerCase();
-  if(want==='es'||want==='ru')location.replace(want+'/'+location.hash);
+  if(want==='es'||want==='ca'||want==='ru')location.replace(want+'/'+location.hash);
 })();
 const top_=document.getElementById('top');
 addEventListener('scroll',()=>top_.classList.toggle('scrolled',scrollY>8),{passive:true});
