@@ -48,6 +48,7 @@ img,svg{display:block}
 .logo svg{width:30px;height:30px}
 .links{display:flex;gap:30px;align-items:center}
 .links a{text-decoration:none;color:var(--ink-2);font-weight:500;font-size:15px}
+.logo .byv{font-size:11px;font-weight:650;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);align-self:flex-end;margin:0 0 5px -2px}
 .lang{display:flex;gap:2px;border:1px solid var(--line);border-radius:10px;padding:2px;background:var(--bg-2)}
 .lang a{font-size:12.5px;font-weight:650;padding:4px 8px;border-radius:7px;color:var(--muted);letter-spacing:.02em}
 .lang a:hover{color:var(--ink)}
@@ -153,6 +154,7 @@ footer a{text-decoration:none;margin-left:22px}footer a:hover{color:var(--ink)}
 }
 @media (max-width:520px){
   .links>.btn{display:none}
+  .logo .byv{display:none}
 }
 @media (max-width:420px){
   .logo{font-size:0;gap:0}
@@ -171,7 +173,7 @@ footer a{text-decoration:none;margin-left:22px}footer a:hover{color:var(--ink)}
 
 <header class="top" id="top">
   <div class="wrap">
-    <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>Calmdeck</a>
+    <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 19c2.5 3 5 4.5 8 4.5s5.5-1.5 8-4.5M16 7v16" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>Calmdeck<small class="byv">от Vitrina</small></a>
     <nav class="links">
       <a href="#features">Возможности</a><a href="#privacy">Приватность</a><a href="#pricing">Цена</a><a href="#faq">Вопросы</a>
       <!--LANG--><div class="lang" role="group" aria-label="Язык"><a href="../" hreflang="en" lang="en" title="English">EN</a><a href="../es/" hreflang="es" lang="es" title="Español">ES</a><a href="../ca/" hreflang="ca" lang="ca" title="Català">CA</a><a href="../ru/" hreflang="ru" lang="ru" title="Русский" class="on" aria-current="page">RU</a></div><!--/LANG-->
